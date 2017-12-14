@@ -1,0 +1,168 @@
+{
+	// Buffs, get your buffs here!
+	// Buffs can be applied by weapons, consumable items, etc.
+
+	"fire_standard": {
+		"category": "fire",
+
+		"damage": {
+			"damage": 2,
+			"tick": 1000,
+			"means": "MOD_IGNITED"
+		},
+
+		"canceling": {
+			"noStack": true,
+			"priority": 50,
+
+			// fire also removes cold and freeze debuffs
+			"extraCancel": [
+				{ "category": "cold", "priority": 100 }
+			]
+		}
+	},
+
+	"freeze_standard": {
+		"category": "cold",
+
+		"damage": {
+			"damage": 2,
+			"tick": 1000,
+			"means": "MOD_FROZEN"
+		},
+
+		"canceling": {
+			"noStack": true,
+			// freeze has a priority of 100, meaning that cold (with priority 50) cannot be applied
+			"priority": 100,
+
+			// freeze removes fire debuffs
+			"extraCancel": [
+				{ "category": "fire", "priority": 100 }
+			]
+		},
+
+		"passive": {
+			"pmoveType": "PM_FREEZE",
+
+			// being frozen --severely-- reduces damage taken
+			"meansModifiers": {
+				"MOD_BLASTER": 0.25,
+				"MOD_DISRUPTOR": 0.25,
+				"MOD_SLUGTHROWER": 0.25,
+				"MOD_ACP": 0.25,
+				"MOD_PULSE": 0.25,
+				"MOD_QUARREL": 0.25,
+				"MOD_COLD": 0.1,
+				"MOD_FIRE": 0.1,
+				"MOD_BLEEDING": 0.1
+			}
+		}
+	},
+
+	"stun_standard": {
+		"category": "stun",
+
+		"canceling": {
+			"noStack": true,
+			"priority": 50
+		},
+
+		"passive": {
+			"pmoveType": "PM_FREEZE"
+		}
+	},
+
+	"carbonite_standard": {
+		"category": "carbonite",
+
+		"damage": {
+			"damage": 2,
+			"tick": 1000,
+			"means": "MOD_CARBONITE"
+		},
+
+		"canceling": {
+			"noStack": true,
+			"priority": 100,
+
+			// carbonite removes fire, freeze and cold effects
+			"extraCancel": [
+				{ "category": "fire", "priority": 100 },
+				{ "category": "cold", "priority": 100 }
+			]
+		},
+
+		"passive": {
+			"pmoveType": "PM_FREEZE",
+
+			// being frozen --severely-- reduces damage taken
+			"meansModifiers": {
+				"MOD_BLASTER": 0.25,
+				"MOD_DISRUPTOR": 0.25,
+				"MOD_SLUGTHROWER": 0.25,
+				"MOD_ACP": 0.25,
+				"MOD_PULSE": 0.25,
+				"MOD_QUARREL": 0.25,
+				"MOD_COLD": 0.1,
+				"MOD_FIRE": 0.1,
+				"MOD_BLEEDING": 0.1
+			}
+		}
+	},
+
+	"bleed_standard": {
+		"category": "bleed",
+
+		"damage": {
+			"damage": 4,
+			"tick": 1000,
+			"means": "MOD_BLEEDING"
+		},
+
+		"canceling": {
+			"noStack": true,
+			"priority": 50
+		},
+
+		"passive": {
+			// bleeding makes us take double damage from poison
+			"meansModifiers": {
+				"MOD_POISONED": 2.0
+			}
+		}
+	},
+
+	"cold_standard": {
+		"category": "cold",
+
+		"canceling": {
+			"noStack": true,
+			"priority": 50,
+
+			// cold removes fire
+			"extraCancel": [
+				{ "category": "fire", "priority": 50 }
+			]
+		},
+
+		"passive": {
+			"movementModifier": 0.75
+		}
+	},
+
+	"poison_standard": {
+		"category": "poison",
+
+		"damage": {
+			"damage": 5,
+			"tick": 1000,
+			"means": "MOD_POISONED"
+		},
+
+		"canceling": {
+			"noStack": true,
+			"priority": 50
+		}
+	}
+}

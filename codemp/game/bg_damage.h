@@ -16,6 +16,7 @@ struct meansOfDamage_t {
 	char inventoryName[MAX_QPATH];
 
 	qboolean hitmarkerExplosives;
+	qboolean disintegrate;
 
 	struct {
 		qboolean noDamagePlums;
