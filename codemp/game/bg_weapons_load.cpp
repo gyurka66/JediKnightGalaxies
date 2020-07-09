@@ -300,7 +300,14 @@ static void BG_ParseWeaponFireMode ( weaponFireModeStats_t *fireModeStats, cJSON
     
     node = cJSON_GetObjectItem (fireModeNode, "range");
     fireModeStats->range = (float)cJSON_ToIntegerOpt (node, WPR_M);
-    
+
+    node = cJSON_GetObjectItem(fireModeNode, "decayRate");
+    fireModeStats->decayRate = (float)cJSON_ToNumberOpt(node, 0.25);
+    if (fireModeStats->decayRate > 1) //check for invalid decayRates
+        fireModeStats->decayRate = 1;
+    if (fireModeStats->decayRate < 0)
+        fireModeStats->decayRate = 0;
+
     node = cJSON_GetObjectItem (fireModeNode, "splashrange");
     fireModeStats->rangeSplash = (float)cJSON_ToNumberOpt (node, 0.0);
     

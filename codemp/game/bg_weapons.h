@@ -258,6 +258,7 @@ typedef struct weaponFireModeStats_s
 	char		cost;				// The ammo cost to shoot the weapon.
 	short		delay;				// The delay between each shot/throw/burstfire/whatever.
 	float		range;				// The maximum amount of range this weapon/mode can reach.
+	float		decayRate;			// The rate the weapons damage decays when fired beyond the maximum range (default 0.25).
 	float		rangeSplash;		// The possible splash damage range. Damage calculation is done based on point of impact to end of radius.
 	float		recoil;			    // The weapon recoil to smash into the camera, repeaters for instance have low but much recoil.
 	float		speed;				// The speed override, set different then 0 to avoid using global speed.

@@ -616,13 +616,30 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 			if ( VectorLength( velocity ) == 0 ) {
 				velocity[2] = 1;	// stepped on a grenade
 			}
+			
+			/* We fired beyond max range and should do less dmg*/
+			if (ent->maxRange != ent->range)
+			{
+				float distance = Distance(ent->s.pos.trBase, ent->r.currentOrigin);
+				JKG_DoDecayDamage(&fireMode->primary, other, ent, &g_entities[ent->r.ownerNum], velocity, ent->r.currentOrigin, 0, ent->methodOfDeath, distance, ent->range, ent->decayRate);
 
-            JKG_DoDamage (&fireMode->primary, other, ent, &g_entities[ent->r.ownerNum], velocity, ent->r.currentOrigin, 0, ent->methodOfDeath);
-            
-            if ( fireMode->secondaryDmgPresent )
-            {
-                JKG_DoDamage (&fireMode->secondary, other, ent, &g_entities[ent->r.ownerNum], velocity, ent->r.currentOrigin, 0, ent->methodOfDeath);
-            }
+				if (fireMode->secondaryDmgPresent)
+					JKG_DoDecayDamage(&fireMode->secondary, other, ent, &g_entities[ent->r.ownerNum], velocity, ent->r.currentOrigin, 0, ent->methodOfDeath, distance, ent->range, ent->decayRate);
+
+				//reduced dmg to 0
+				if(distance < ent->maxRange)
+					goto killProj;
+			}
+
+			else
+			{
+				JKG_DoDamage(&fireMode->primary, other, ent, &g_entities[ent->r.ownerNum], velocity, ent->r.currentOrigin, 0, ent->methodOfDeath);
+
+				if (fireMode->secondaryDmgPresent)
+				{
+					JKG_DoDamage(&fireMode->secondary, other, ent, &g_entities[ent->r.ownerNum], velocity, ent->r.currentOrigin, 0, ent->methodOfDeath);
+				}
+			}
 
 			if (other->client)
 			{ //What I'm wondering is why this isn't in the NPC pain funcs. But this is what SP does, so whatever.
@@ -681,6 +698,9 @@ killProj:
 
 	if(ent->splashRadius && ent->splashDamage && !ent->genericValue10)
 	{
+		//to consider here:
+		//reduce splash damage for certain missile types that are fired 
+		//beyond the range of the weapon (like with direct projectile damage)?
 		G_RadiusDamage(trace->endpos, &g_entities[ent->r.ownerNum], ent->splashDamage, ent->splashRadius, NULL, ent, ent->methodOfDeath);
 	}
 

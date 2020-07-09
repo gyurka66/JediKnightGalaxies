@@ -2117,6 +2117,46 @@ void WP_CalculateMuzzlePoint( gentity_t *ent, vec3_t forward, vec3_t right, vec3
 }
 
 /**************************************************
+* WP_GetMaxRangeWithDecay
+*
+* Returns the maximum range of the weapon given 
+* its range value, damage, and decayRate.
+* damage == 0 when fired at this maxrange.
+*
+* If looking for maxrange when damage == 1, 
+* subtract .01 from the result, or truncate the
+* return type to an interger via cast.
+* eg: static_cast<int>()
+**************************************************/
+
+//find the maximum effective range beyond a weapon's range (when damage == 0)
+float WP_GetMaxRangeWithDecay(int damage, float range, float decayRate)
+{
+	//flip damage for heals
+	if (damage < 0)
+	{
+		damage = -damage;
+	}
+
+	if (damage && range > 0 && decayRate > 0.0 && decayRate < 1.0)
+	{
+		if (decayRate < 0.0001)
+			decayRate = 0.0001;
+
+		float multiplier = std::log(1.0 / damage) / std::log(decayRate);
+		float maxRange = (range * multiplier) + range;
+
+		//don't allow ranges beyond 10x
+		if ((maxRange / range) > MAX_RANGE_MULTIPLIER)
+			range = range * MAX_RANGE_MULTIPLIER;
+		else
+			range = maxRange;
+	}
+
+	return (range);
+}
+
+/**************************************************
 * WP_FireGenericMissile
 *
 * Fires a generic grenade for the currently equiped
@@ -2205,7 +2245,9 @@ gentity_t *WP_FireGenericMissile( gentity_t *ent, int firemode, vec3_t origin, v
 	qboolean	 bGravity			 = WP_GetWeaponGravity( ent, firemode );
 	int			 iMOD				 = WP_GetWeaponMOD( ent, firemode );
 	int			 iSplashMOD			 = WP_GetWeaponSplashMOD( ent, firemode );
+	float		 fDecayRate			 = WP_GetWeaponDecayRate(ent, firemode);
 	float		 fRange				 = WP_GetWeaponRange( ent, firemode );
+	float		 fMaxRange			 = WP_GetMaxRangeWithDecay(iDamage, fRange, fDecayRate);
 	float		 fSpeed				 = WP_GetWeaponSpeed( ent, firemode );
 	float		 fSplashRange		 = WP_GetWeaponSplashRange( ent, firemode );
 	gentity_t	*missile			 = NULL;
@@ -2224,10 +2266,25 @@ gentity_t *WP_FireGenericMissile( gentity_t *ent, int firemode, vec3_t origin, v
 	/* Set the appropriate range for the bullet */
 	if ( fRange >= 0.0f )
 	{
-		//missile->s.eventParm		 = fRange;
-		// Xycaleth: casual hi-jacking of some random variable. It's so random you'd have
-		// thought it wasn't out of place at all in Raven's code! :D
-		missile->s.apos.trBase[0]   = fRange;
+		//if our maxRange is different, we need to calculate damage decay
+		if (fRange != fMaxRange)
+		{
+			missile->range = fRange;
+			missile->maxRange = fMaxRange;
+			missile->decayRate = fDecayRate;
+			missile->s.apos.trBase[0] = fMaxRange;
+		}
+		else
+		{
+			missile->range = fRange;
+			missile->maxRange = fRange;
+			missile->decayRate = 1;
+
+			//missile->s.eventParm		 = fRange;
+			// Xycaleth: casual hi-jacking of some random variable. It's so random you'd have
+			// thought it wasn't out of place at all in Raven's code! :D
+			missile->s.apos.trBase[0] = fRange;
+		}
 	}
 
 	/* If this missile uses gravity, and if such give a slighty boost and set the movement type */
@@ -2288,7 +2345,9 @@ void WP_FireGenericTraceLine( gentity_t *ent, int firemode )
 {
 	int			 iDamage		 = WP_GetWeaponDamage( ent, firemode );
 	float		 fRange			 = WP_GetWeaponRange( ent, firemode );
+	float		 fMaxRange		 = fRange; //same as range, unless decayRate is set
 	int			 iSkip			 = ent->s.number;
+	float		 fDecayRate		 = WP_GetWeaponDecayRate(ent, firemode);
 
 	gentity_t	*traceEnt, *tent;
 	trace_t		 tr;
@@ -2309,9 +2368,16 @@ void WP_FireGenericTraceLine( gentity_t *ent, int firemode )
 
 	while( iDamage > 0 )
 	{
-		/* Set the range forward to the end */
-		VectorMA( start, fRange, forward, end );
+		
+		/* Increase search up to maxRange if decayRate is a factor */
+		if (fDecayRate > 0.0 && fDecayRate < 1.0)
+		{
+			fMaxRange = WP_GetMaxRangeWithDecay(iDamage, fRange, fDecayRate);
+		}
 
+		/* Set the range forward to the end*/
+		VectorMA(start, fMaxRange, forward, end);
+			
 		/* Start the trace until we hit something */
 		trap->Trace( &tr, start, NULL, NULL, end, iSkip, MASK_SHOT, 0, G2TRFLAG_DOGHOULTRACE|G2TRFLAG_GETSURFINDEX|G2TRFLAG_THICK|G2TRFLAG_HITCORPSES, 3 );
 
@@ -2344,7 +2410,7 @@ void WP_FireGenericTraceLine( gentity_t *ent, int firemode )
 			VectorSubtract( tr.endpos, start, difference );
 
 			/* Substract the range, set the skip entity and copy the end position as the start */
-			fRange	= fRange - VectorNormalize( difference );
+			fMaxRange = fMaxRange - VectorNormalize( difference );
 			iSkip	= tr.entityNum;
 			VectorCopy( tr.endpos, start );
 			continue;
@@ -2413,12 +2479,33 @@ void WP_FireGenericTraceLine( gentity_t *ent, int firemode )
 				{
 					weaponFireModeStats_t *fireMode = (weaponFireModeStats_t*)GetEntsCurrentFireMode (ent);
 
-					JKG_DoDirectDamage(&fireMode->primary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode));
-					    
-					if ( fireMode->secondaryDmgPresent )
+					/* We need to calculate what the damage would be, if the distance exceeds maximum range of the weapon */
+					if (fMaxRange != fRange)
 					{
-						JKG_DoDirectDamage(&fireMode->secondary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode));
+						/* Measure distance to first impact */
+						float distance = Distance(start, tr.endpos);
+						if (distance < fMaxRange) //make sure we are in range to do damage
+						{
+							JKG_DoDecayDamage(&fireMode->primary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode), distance, fRange, fDecayRate);
+
+							if (fireMode->secondaryDmgPresent)
+							{
+								JKG_DoDecayDamage(&fireMode->secondary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode), distance, fRange, fDecayRate);
+							}
+						}
 					}
+
+					/* Within range damage*/
+					else
+					{
+						JKG_DoDirectDamage(&fireMode->primary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode));
+
+						if (fireMode->secondaryDmgPresent)
+						{
+							JKG_DoDirectDamage(&fireMode->secondary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode));
+						}
+					}
+
 				}
 			}
 			/* This always shows the sniper miss event, it's used for both primary and secondary fire. */
@@ -2442,17 +2529,37 @@ void WP_FireGenericTraceLine( gentity_t *ent, int firemode )
 			weaponFireModeStats_t *fireMode = (weaponFireModeStats_t*)GetEntsCurrentFireMode (ent);
 
 			/* Remember the legs/torse stance and client angles */
-			if ( traceEnt->client )
+			if (traceEnt->client)
 			{
-				VectorCopy( traceEnt->client->ps.viewangles, preAng );
+				VectorCopy(traceEnt->client->ps.viewangles, preAng);
 			}
 
-			/* Throw the damage at the client, we'll be able to see if we're disintegrating him after this! */
-			JKG_DoDirectDamage(&fireMode->primary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode));
-			    
-			if ( fireMode->secondaryDmgPresent )
+			/* We fired beyond max range and should do less dmg*/
+			if (fMaxRange != fRange)
 			{
-				JKG_DoDirectDamage(&fireMode->secondary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode));
+				/* Measure distance to first impact */
+				float distance = Distance(start, tr.endpos);
+				if (distance < fMaxRange) //make sure we are in range to do damage
+				{
+					JKG_DoDecayDamage(&fireMode->primary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode), distance, fRange, fDecayRate);
+
+					if (fireMode->secondaryDmgPresent)
+					{
+						JKG_DoDecayDamage(&fireMode->secondary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode), distance, fRange, fDecayRate);
+					}
+				}
+			}
+
+			/* Fired within range.*/
+			else
+			{
+				/* Throw the damage at the client, we'll be able to see if we're disintegrating him after this! */
+				JKG_DoDirectDamage(&fireMode->primary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode));
+
+				if (fireMode->secondaryDmgPresent)
+				{
+					JKG_DoDirectDamage(&fireMode->secondary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode));
+				}
 			}
 
 			/* Remove the amount of damage hit on this client from our trace, this way even normal disruptor shots can continue! */
@@ -2876,6 +2983,26 @@ float WP_GetWeaponRange( gentity_t *ent, int firemode )
 
 	return WPR_M;
 }
+
+/**************************************************
+* GetWeaponDecayRate
+*
+* Gets the weapon's decayRate for the currently selected
+* weapon with the appropriate mode. This references
+* the weapon table for this information.
+**************************************************/
+float WP_GetWeaponDecayRate(gentity_t* ent, int firemode)
+{
+	weaponData_t* thisWeaponData = GetWeaponData(ent->s.weapon, ent->s.weaponVariation);
+
+	if (thisWeaponData->firemodes[firemode].decayRate)
+	{
+		return thisWeaponData->firemodes[firemode].decayRate;
+	}
+
+	return 0.25;
+}
+
 
 /**************************************************
 * WP_GetWeaponShotCount

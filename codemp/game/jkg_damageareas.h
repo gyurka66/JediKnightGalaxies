@@ -32,7 +32,11 @@ void JKG_DoDamage ( damageSettings_t* data, gentity_t *targ, gentity_t *inflicto
 void JKG_DoSplashDamage ( damageSettings_t* data, const vec3_t origin, gentity_t *inflictor, gentity_t *attacker, gentity_t *ignoreEnt, int mod );
 void JKG_DoDirectDamage ( damageSettings_t* data, gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t origin, int dflags, int mod );
 void JKG_DoObjectDamage(  damageSettings_t* data, gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t origin, int dflags, int mod );
+void JKG_DoDecayDamage(damageSettings_t* data, gentity_t* targ, gentity_t* inflictor, gentity_t* attacker, vec3_t dir, vec3_t origin, int dflags, int mod, float distance, float range, float decayRate);
 void JKG_DamagePlayers ( void );
 void G_TickBuffs(gentity_t* ent);
+int JKG_CalculateDamageDecay(int damage, float distance, float range, float decayRate);
+
+constexpr float MAX_RANGE_MULTIPLIER = 10.0;	//how many times should we bother calculating beyond a weapon's range
 
 #endif

@@ -848,6 +848,85 @@ void JKG_DoObjectDamage(damageSettings_t* data, gentity_t *targ, gentity_t *infl
 
 }
 
+////=========================================================
+// JKG_DoDecayDamage
+//---------------------------------------------------------
+// Description: This is a wrapper for the JKG_DoDamage
+// function, handles special cases when weapons have been
+// fired beyond maximum range and their damage is reduced.
+//=========================================================
+void JKG_DoDecayDamage(damageSettings_t* data, gentity_t* targ, gentity_t* inflictor, gentity_t* attacker, vec3_t dir, vec3_t origin, int dflags, int mod, float distance, float range, float decayRate)
+{
+	//todo: check this works --futuza
+	if (data->radial)
+	{
+		JKG_DoSplashDamage(data, origin, inflictor, attacker, NULL, mod);
+	}
+
+	damageArea_t area;
+	int damage;
+
+	if (!targ->takedamage)
+	{
+		return;
+	}
+
+	if (targ->health <= 0)
+	{
+		return;
+	}
+
+	memset(&area, 0, sizeof(area));
+
+	area.data = data;
+
+	// The firing mode's base damage can lie! It doesn't account for dynamic damage amounts (ie weapon charging)
+	area.context.damageOverride = JKG_ChargeDamageOverride(inflictor, inflictor == attacker);
+	if (area.context.damageOverride != 0 && area.data->damage != area.context.damageOverride)
+	{
+		damage = area.context.damageOverride;
+	}
+	else
+	{
+		damage = data->damage;
+	}
+
+	VectorCopy(dir, area.context.direction);
+	if (attacker->client && attacker->client->ps.ammoType)
+	{
+		area.context.ammoType = attacker->client->ps.ammoType;
+		JKG_ApplyAmmoOverride(damage, ammoTable[area.context.ammoType].overrides.damage);
+	}
+	else
+	{
+		area.context.ammoType = -1;
+	}
+
+	if (decayRate > 0.0 && decayRate < 1.0)
+	{
+		damage = JKG_CalculateDamageDecay(damage, distance, range, decayRate);
+	}
+
+	//damaging an object?  different procedure (can't apply debuffs etc)
+	if (!targ->client)
+	{
+		G_Damage(targ, inflictor, attacker, dir, origin, damage, dflags, mod);
+		return;
+	}
+
+	area.context.ignoreEnt = NULL;
+	area.context.attacker = attacker;
+	area.context.damageFlags = dflags;
+	area.context.inflictor = inflictor;
+	area.context.methodOfDeath = mod;
+	area.startTime = level.time;
+	area.lastDamageTime = 0;
+	VectorCopy(origin, area.origin);
+
+	DebuffPlayer(targ, &area, damage, mod);		//note: DebuffPlayer calls G_Damage() for both debuffs and regular damage
+}
+
+
 //=========================================================
 // JKG_DoDamage
 //---------------------------------------------------------
@@ -885,4 +964,71 @@ void JKG_DamagePlayers ( void )
 	{
 		DamagePlayersInArea(&(*it));
 	}
+}
+
+
+/**************************************************
+* WP_CalculateDamageDecay
+*
+* Calculates how much damage to do if a shot exceeds
+* the weapons maximum range (exponetial decay).
+* Note that if the distance exceeds 10x the range
+* we don't bother with the decay function and just
+* reduce the damage to 0 nothing.  Can also handle
+* negative (healing) damage.
+**************************************************/
+
+//how much damage a shot should do if it exceeds its range
+int JKG_CalculateDamageDecay(int damage, float distance, float range, float decayRate)
+{
+	if (damage == 0)
+		return damage;
+
+	//flip dmg for heals
+	bool heal = false;
+	if (damage < 0)
+	{
+		heal = true;
+		damage = -damage; //flip
+	}
+
+	if (distance <= range)
+		return damage;
+
+	if (decayRate <= 0.0)
+		return 0;
+
+	//decay does not effect this weapon warn devs they probably did something dumb
+	if (decayRate >= 1.0)
+	{
+#ifdef _DEBUG
+		Com_Printf("WARNING: Weapon damage not affected over distance! Invalid decayRate?");
+#endif
+		return damage;
+	}
+
+	//clamp extreme values
+	if (distance >= range * MAX_RANGE_MULTIPLIER)  //if we're firing this weapon 10x its range, we've gone too far
+		return 0;
+
+	if (decayRate < 0.0001)
+		decayRate = 0.0001;
+
+	/*Okay we're good to engage*/
+	float relDistance = static_cast<float>((distance - range) / range);  //determine how far, percentage wise the projectile has travelled.
+	if (relDistance < 0.0001)
+		relDistance = 0.0001;   //clamp
+
+	damage = static_cast<int>(damage * pow(decayRate, relDistance));  //eg y = 5*(0.25)^1 == 1.25dmg
+
+	//clamp
+	if (damage > 999)
+		damage = 999;
+
+	//flip damage
+	if (heal)
+		return -damage;
+
+	else
+		return damage;
 }
