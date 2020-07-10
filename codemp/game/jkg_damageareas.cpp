@@ -1019,7 +1019,7 @@ int JKG_CalculateDamageDecay(int damage, float distance, float range, float deca
 	if (relDistance < 0.0001)
 		relDistance = 0.0001;   //clamp
 
-	damage = static_cast<int>(damage * powf(decayRate, relDistance));  //eg y = 5*(0.25)^1 == 1.25dmg
+	damage = static_cast<int>(damage * std::pow(decayRate, relDistance));  //eg y = 5*(0.25)^1 == 1.25dmg
 
 	//clamp
 	if (damage > 999)

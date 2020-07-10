@@ -2143,7 +2143,7 @@ float WP_GetMaxRangeWithDecay(int damage, float range, float decayRate)
 		if (decayRate < 0.0001)
 			decayRate = 0.0001;
 
-		float multiplier = std::logf(1.0 / damage) / std::logf(decayRate);
+		float multiplier = static_cast<float>(std::log(1.0 / damage) / std::log(decayRate)); // --futuza: gcc has a stupid bug so we can't use logf(), see: https://stackoverflow.com/questions/55458487/stdexpf-and-stdlogf-not-recognized-by-gcc-7-2-0
 		float maxRange = (range * multiplier) + range;
 
 		//don't allow ranges beyond 10x
