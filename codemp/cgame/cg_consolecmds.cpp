@@ -365,16 +365,6 @@ static void Cmd_PrintWeaponList_f ( void )
 	BG_PrintWeaponList();
 }
 
-static void JKG_ToggleCrouch ( void )
-{
-	if((cg.time - cg.crouchToggleTime) <= 400)
-	{
-		// You can now no longer "teabag at maximum velocity" --eez
-		return;
-	}
-	cg.crouchToggleTime = cg.time;
-}
-
 static void JKG_PrintItemList(void)
 {
 	BG_PrintItemList();

@@ -922,8 +922,6 @@ typedef struct cg_s {
 	int			warmup;
 	int			warmupCount;
 
-	int			crouchToggleTime;
-
 	//==========================
 
 	int			itemPickup;
