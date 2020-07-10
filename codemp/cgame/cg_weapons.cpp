@@ -1286,7 +1286,15 @@ void CG_NextWeapon_f( void )
 
 	//no switching while cooking nades
 	if (cg.jkg_grenadeCookTimer)
+	{
 		return;
+	}
+
+	//overheated, you can't just put the gun in your pocket
+	if (cg.snap->ps.overheated)
+	{
+		return;
+	}
 
 	while(numIterations < MAX_ACI_SLOTS)
 	{
@@ -1377,7 +1385,15 @@ void CG_PrevWeapon_f( void )
 
 	//no switching while cooking nades
 	if (cg.jkg_grenadeCookTimer)
+	{
 		return;
+	}
+
+	//overheated, you can't just put the gun in your pocket
+	if (cg.snap->ps.overheated)
+	{
+		return;
+	}
 
 	while(numIterations < MAX_ACI_SLOTS)
 	{
@@ -1647,7 +1663,15 @@ void CG_Weapon_f( void ) {
 
 	//no switching while cooking nades
 	if (cg.jkg_grenadeCookTimer)
+	{
 		return;
+	}
+
+	//overheated, you can't just put the gun in your pocket
+	if (cg.snap->ps.overheated)
+	{
+		return;
+	}
 
 	num = atoi( CG_Argv( 1 ) );
 	if(num < 0 || num > 9)

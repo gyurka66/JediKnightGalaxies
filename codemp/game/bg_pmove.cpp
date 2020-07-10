@@ -4503,6 +4503,15 @@ void PM_BeginWeaponChange( int weaponId ) {
 		pm->ps->zoomTime = pm->ps->commandTime;
 	}
 
+	// Are we currently overheated
+	if (pm->ps->overheated)
+	{
+		//PM_AddEvent(EV_HEATCRIT);
+		return; 
+		//In the future allow, but apply damage if we try to switch while overheated? eg:
+		//G_Damage(ent, NULL, NULL, NULL, NULL, 2, DAMAGE_NO_SHIELD, MOD_LAVA);
+	}
+
     // Change of weapon
     PM_AddEventWithParm( EV_CHANGE_WEAPON, weaponId);
     
