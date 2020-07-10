@@ -1773,7 +1773,6 @@ void SetTeam( gentity_t *ent, char *s ) {
 	int					clientNum;
 	spectatorState_t	specState;
 	int					specClient;
-	int					teamLeader;
 
 	// fix: this prevents rare creation of invalid players
 	if (!ent->inuse)

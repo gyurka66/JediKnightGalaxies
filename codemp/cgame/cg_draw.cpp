@@ -422,8 +422,6 @@ float RADAR_RADIUS	=		30;
 #define RADAR_X					(580 - RADAR_RADIUS)
 //#define RADAR_Y					10 //dynamic based on passed Y val
 #define RADAR_CHAT_DURATION		6000
-static int radarLockSoundDebounceTime = 0;
-static int impactSoundDebounceTime = 0;
 #define	RADAR_MISSILE_RANGE					3000.0f
 #define	RADAR_ASTEROID_RANGE				10000.0f
 #define	RADAR_MIN_ASTEROID_SURF_WARN_DIST	1200.0f
@@ -4613,7 +4611,6 @@ void CG_PerformanceAnalysis()
 void ChatBox_CloseChat();
 static void CG_Draw2D( void ) {
 	float			fallTime; 
-	int				drawSelect = 0;
 	int				drawHUD	= cg_drawHUD.integer;
 
 	// if we are taking a levelshot for the menu, don't draw anything

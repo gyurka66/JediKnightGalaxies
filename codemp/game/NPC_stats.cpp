@@ -3377,7 +3377,7 @@ Ghoul2 Insert End
 
 		//if (stats->runSpeed < 300)
 		//	stats->runSpeed		= 300;
-			stats->runSpeed		= 220;
+		stats->runSpeed		= 220;
 
 		if (stats->acceleration < 160)
 			stats->acceleration	= 160;//Increase/descrease speed this much per frame (20fps)

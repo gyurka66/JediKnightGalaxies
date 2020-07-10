@@ -223,7 +223,6 @@ CG_MapTorsoToWeaponFrame
 =================
 */
 static int CG_MapTorsoToWeaponFrame( const clientInfo_t *ci, int frame, int animNum ) {
-	float animspeed = 1.0f;
 	const weaponData_t *weaponData = GetWeaponData(cg.predictedPlayerState.weapon, cg.predictedPlayerState.weaponVariation);
 	animation_t *animations = bgHumanoidAnimations;
 
@@ -2592,7 +2591,6 @@ void JKG_RenderGenericWeaponWorld ( centity_t *cent, const weaponDrawData_t *wea
 		if ( weaponData->weaponRender.generic.muzzleEffect )
 		{
 			matrix3_t axis;
-			int boltNum = trap->G2API_AddBolt(cent->ghoul2, 1, "*flash");
 			AnglesToAxis(cent->lerpAngles, axis);
 			trap->FX_PlayEntityEffectID(muzzleEffect,
 				flashOrigin, axis, cent->boltInfo, cent->currentState.number, -1, -1);

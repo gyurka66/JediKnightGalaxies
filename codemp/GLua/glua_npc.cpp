@@ -20,7 +20,7 @@ gentity_t *GLua_CheckNPC(lua_State *L, int idx) {
 		return NULL;
 	if (ent->s.eType != ET_NPC)
 		return NULL;
-	if (ent->IDCode != ent->IDCode)
+	if (ent->IDCode != npc->IDCode)
 		return NULL;
 	if (!ent->client)	// Safety check, since most functions will access client, ensure it's set
 		return NULL;

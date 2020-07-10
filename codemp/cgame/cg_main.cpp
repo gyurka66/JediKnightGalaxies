@@ -148,7 +148,6 @@ static int	C_PointContents(void);
 static void C_GetLerpOrigin(void);
 static void C_GetLerpData(void);
 static int	CG_RagCallback(int callType);
-static void C_ImpactMark(void);
 
 extern autoMapInput_t cg_autoMapInput; //cg_view.c
 extern int cg_autoMapInputTime;
@@ -358,16 +357,6 @@ static int CG_RagCallback(int callType)
 	}
 
 	return 0;
-}
-
-static void C_ImpactMark( void ) {
-	TCGImpactMark *data = &cg.sharedBuffer.impactMark;
-
-//	CG_ImpactMark( (int)arg0, (const float *)arg1, (const float *)arg2, (float)arg3, (float)arg4, (float)arg5, (float)arg6,
-//		(float)arg7, qtrue, (float)arg8, qfalse );
-
-	CG_ImpactMark( data->mHandle, data->mPoint, data->mAngle, data->mRotation, data->mRed, data->mGreen, data->mBlue,
-		data->mAlphaStart, qtrue, data->mSizeStart, qfalse );
 }
 
 void CG_MiscEnt( void ) {

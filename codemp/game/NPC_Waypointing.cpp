@@ -549,8 +549,9 @@ int NPC_MOVEMENT_ReachableBy(gentity_t *NPC, vec3_t goal)
 	//if (g_entities[trace.entityNum].s.eType == ET_NPC)
 	//	trap->Print("Hit an NPC!\n");
 
-    if (trace.fraction == 1.0)
+    if (trace.fraction == 1.0) {
         return REACHABLE; // Yes we can see it
+	}
 
 	// Now look for jump access...
 	VectorAdd( Org, playerMins, mins );
@@ -561,8 +562,9 @@ int NPC_MOVEMENT_ReachableBy(gentity_t *NPC, vec3_t goal)
 	VectorCopy(Org, eyes);
 	eyes[2]+=32;
 	trap->Trace(&trace, eyes, v, NPC->r.maxs, goal, NPC->s.number, MASK_SOLID|MASK_OPAQUE, 0, 0, 0);
-    if (trace.fraction == 1.0)
+    if (trace.fraction == 1.0) {
         return REACHABLE_JUMP; // Yes we can see it
+	}
 
 	// Now look for crouch access...
 	//CROUCH_VIEWHEIGHT ??
@@ -571,8 +573,9 @@ int NPC_MOVEMENT_ReachableBy(gentity_t *NPC, vec3_t goal)
 	VectorCopy(NPC->r.maxs,v2);
     v2[2] *= 0.5; // Stepsize
 	trap->Trace(&trace, Org, v, v2, goal, NPC->s.number, MASK_SOLID|MASK_OPAQUE, 0, 0, 0);
-    if (trace.fraction == 1.0)
+    if (trace.fraction == 1.0) {
         return REACHABLE_DUCK; // Yes we can see it
+	}
 
 	// Now look for strafe access... Left or Right...
 	AngleVectors( NPC->client->ps.viewangles, forward, right, up );

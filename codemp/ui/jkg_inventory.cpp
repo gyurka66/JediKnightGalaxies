@@ -64,13 +64,11 @@ DESCRIPTION CONSTRUCTION
 
 // Returns the proper tag that should appear with Blast Damage
 char* JKG_GetBlastDamageTag(weaponData_t* pData, const int nFiringMode) {
-	weaponFireModeStats_t* pFireMode = &pData->firemodes[nFiringMode];
 	return ""; // Damage stuff isn't loaded yet :<
 }
 
 // Returns the proper tag that should appear with Fallout Damage
 char* JKG_GetFalloutDamageTag(weaponData_t* pData, const int nFiringMode) {
-	weaponFireModeStats_t* pFireMode = &pData->firemodes[nFiringMode];
 	return ""; // Damage stuff isn't loaded yet :<
 }
 

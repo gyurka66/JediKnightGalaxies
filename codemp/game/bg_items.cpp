@@ -510,7 +510,6 @@ void BG_ReceivedTradePacket(itemTradePacketType_t packet) {
 			break;
 		case IPT_TRADESINGLE:
 			{
-				int credits = atoi(CG_Argv(2));
 				int itemID = atoi(CG_Argv(3));
 				int quantity = atoi(CG_Argv(4));
 				itemInstance_t item = BG_ItemInstance(itemID, quantity);

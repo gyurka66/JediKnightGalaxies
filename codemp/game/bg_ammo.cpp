@@ -18,8 +18,6 @@
 ammo_t ammoTable[MAX_AMMO_TYPES];
 int numAmmoLoaded = 0;
 
-const vec3_t defaultvec3 = { 1.0, 1.0, 1.0 };
-
 /*
 ============================
 BG_GetAmmo

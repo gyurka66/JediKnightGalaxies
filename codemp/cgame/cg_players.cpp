@@ -977,58 +977,6 @@ void CG_ArmorChanged(centity_t* cent, entityState_t* to, entityState_t* from) {
 	}
 }
 
-/*
-====================
-CG_ColorFromString
-====================
-*/
-static void CG_ColorFromString( const char *v, vec3_t color ) {
-	int val;
-
-	VectorClear( color );
-
-	val = atoi( v );
-
-	if ( val < 1 || val > 7 ) {
-		VectorSet( color, 1, 1, 1 );
-		return;
-	}
-
-	if ( val & 1 ) {
-		color[2] = 1.0f;
-	}
-	if ( val & 2 ) {
-		color[1] = 1.0f;
-	}
-	if ( val & 4 ) {
-		color[0] = 1.0f;
-	}
-}
-
-/*
-====================
-CG_ColorFromInt
-====================
-*/
-static void CG_ColorFromInt( int val, vec3_t color ) {
-	VectorClear( color );
-
-	if ( val < 1 || val > 7 ) {
-		VectorSet( color, 1, 1, 1 );
-		return;
-	}
-
-	if ( val & 1 ) {
-		color[2] = 1.0f;
-	}
-	if ( val & 2 ) {
-		color[1] = 1.0f;
-	}
-	if ( val & 4 ) {
-		color[0] = 1.0f;
-	}
-}
-
 //load anim info
 int CG_G2SkelForModel(void *g2)
 {
@@ -7169,7 +7117,6 @@ void CG_Player( centity_t *cent ) {
 	qboolean		gotLHandMatrix = qfalse;
 	qboolean		g2HasWeapon = qfalse;
 	qboolean		drawPlayerSaber = qfalse;
-	qboolean		checkDroidShields = qfalse;
 
 	/* Improvement: Don't send the data of the network if the length exceeds, but still fade (much better) */
 	vec3_t difference;

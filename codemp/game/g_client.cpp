@@ -2662,8 +2662,8 @@ void ClientSpawn(gentity_t *ent, qboolean respawn) {
 	qboolean			use_secondary_spawnpoint = qfalse;
 	int					savedCredits;
 	int					savedAmmo[MAX_AMMO_TYPES] {0};
-	int					savedAmmoTypes[MAX_WEAPON_TABLE_SIZE][MAX_FIREMODES] {0};
-	int					savedClipAmmo[MAX_WEAPON_TABLE_SIZE][MAX_FIREMODES] {0};
+	int					savedAmmoTypes[MAX_WEAPON_TABLE_SIZE][MAX_FIREMODES]{};
+	int					savedClipAmmo[MAX_WEAPON_TABLE_SIZE][MAX_FIREMODES]{};
 	int					savedAmmoType, savedFiringMode;
 	int					savedArmor[MAX_ARMOR];
 
