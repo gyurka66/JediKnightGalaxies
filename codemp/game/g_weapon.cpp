@@ -2366,15 +2366,14 @@ void WP_FireGenericTraceLine( gentity_t *ent, int firemode )
 		start[2] += 24;
 	}
 
+	/* Increase search up to maxRange if decayRate is a factor */
+	if (fDecayRate > 0.0 && fDecayRate < 1.0)
+	{
+		fMaxRange = WP_GetMaxRangeWithDecay(iDamage, fRange, fDecayRate);
+	}
+
 	while( iDamage > 0 )
 	{
-		
-		/* Increase search up to maxRange if decayRate is a factor */
-		if (fDecayRate > 0.0 && fDecayRate < 1.0)
-		{
-			fMaxRange = WP_GetMaxRangeWithDecay(iDamage, fRange, fDecayRate);
-		}
-
 		/* Set the range forward to the end*/
 		VectorMA(start, fMaxRange, forward, end);
 			
@@ -2478,13 +2477,13 @@ void WP_FireGenericTraceLine( gentity_t *ent, int firemode )
 				if ( traceEnt->takedamage )
 				{
 					weaponFireModeStats_t *fireMode = (weaponFireModeStats_t*)GetEntsCurrentFireMode (ent);
+					float distance = Distance(start, tr.endpos);  //measure distance from origin to impact point
 
-					/* We need to calculate what the damage would be, if the distance exceeds maximum range of the weapon */
-					if (fMaxRange != fRange)
+					/* We're in range to do damage*/
+					if (distance < fMaxRange)
 					{
-						/* Measure distance to first impact */
-						float distance = Distance(start, tr.endpos);
-						if (distance < fMaxRange) //make sure we are in range to do damage
+						/* Fired at a distance beyond recommended range. */
+						if (fMaxRange != fRange && distance < fMaxRange)
 						{
 							JKG_DoDecayDamage(&fireMode->primary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode), distance, fRange, fDecayRate);
 
@@ -2493,19 +2492,18 @@ void WP_FireGenericTraceLine( gentity_t *ent, int firemode )
 								JKG_DoDecayDamage(&fireMode->secondary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode), distance, fRange, fDecayRate);
 							}
 						}
-					}
 
-					/* Within range damage*/
-					else
-					{
-						JKG_DoDirectDamage(&fireMode->primary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode));
-
-						if (fireMode->secondaryDmgPresent)
+						/* Within range damage*/
+						else
 						{
-							JKG_DoDirectDamage(&fireMode->secondary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode));
+							JKG_DoDirectDamage(&fireMode->primary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode));
+
+							if (fireMode->secondaryDmgPresent)
+							{
+								JKG_DoDirectDamage(&fireMode->secondary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode));
+							}
 						}
 					}
-
 				}
 			}
 			/* This always shows the sniper miss event, it's used for both primary and secondary fire. */
@@ -2527,19 +2525,18 @@ void WP_FireGenericTraceLine( gentity_t *ent, int firemode )
 			vec3_t	preAng;
 			int		preHealth	= traceEnt->health;
 			weaponFireModeStats_t *fireMode = (weaponFireModeStats_t*)GetEntsCurrentFireMode (ent);
+			float distance = Distance(start, tr.endpos);  //measure distance from origin to impact point
 
 			/* Remember the legs/torse stance and client angles */
 			if (traceEnt->client)
 			{
 				VectorCopy(traceEnt->client->ps.viewangles, preAng);
 			}
-
-			/* We fired beyond max range and should do less dmg*/
-			if (fMaxRange != fRange)
+			/* We're in range to do damage*/
+			if (distance < fMaxRange)
 			{
-				/* Measure distance to first impact */
-				float distance = Distance(start, tr.endpos);
-				if (distance < fMaxRange) //make sure we are in range to do damage
+				/* Fired at a distance beyond recommended range. */
+				if (fMaxRange != fRange && distance < fMaxRange)
 				{
 					JKG_DoDecayDamage(&fireMode->primary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode), distance, fRange, fDecayRate);
 
@@ -2548,17 +2545,16 @@ void WP_FireGenericTraceLine( gentity_t *ent, int firemode )
 						JKG_DoDecayDamage(&fireMode->secondary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode), distance, fRange, fDecayRate);
 					}
 				}
-			}
 
-			/* Fired within range.*/
-			else
-			{
-				/* Throw the damage at the client, we'll be able to see if we're disintegrating him after this! */
-				JKG_DoDirectDamage(&fireMode->primary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode));
-
-				if (fireMode->secondaryDmgPresent)
+				/* Within range damage*/
+				else
 				{
-					JKG_DoDirectDamage(&fireMode->secondary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode));
+					JKG_DoDirectDamage(&fireMode->primary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode));
+
+					if (fireMode->secondaryDmgPresent)
+					{
+						JKG_DoDirectDamage(&fireMode->secondary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode));
+					}
 				}
 			}
 
