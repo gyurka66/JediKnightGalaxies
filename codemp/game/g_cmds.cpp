@@ -4304,7 +4304,7 @@ void Cmd_SaberAttackCycle_f(gentity_t *ent)
 	int selectLevel = 0;
 	int i, j;
 
-	if ( !ent || !ent->client )
+	if ( !ent || !ent->client)
 	{
 		return;
 	}
@@ -4327,7 +4327,7 @@ void Cmd_SaberAttackCycle_f(gentity_t *ent)
 		return;
 	}
 
-	if(ent->client->ps.stats[STAT_HEALTH] < 1)
+	if(!JKG_ClientAlive(ent))
 	{
 		// Don't swap while dead
 		return;
