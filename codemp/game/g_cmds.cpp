@@ -4327,6 +4327,12 @@ void Cmd_SaberAttackCycle_f(gentity_t *ent)
 		return;
 	}
 
+	if(ent->client->ps.stats[STAT_HEALTH] < 1)
+	{
+		// Don't swap while dead
+		return;
+	}
+
 	// Jedi Knight Galaxies, we cant swich saber style if we're not using a saber...
 	if (ent->client->ps.weapon != WP_SABER)
 	{
