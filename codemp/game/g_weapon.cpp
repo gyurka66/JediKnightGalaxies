@@ -27,6 +27,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #include "g_local.h"
 #include "botlib/be_aas.h"
 #include "bg_saga.h"
+#include "game/bg_weapons.h"
 #include "ghoul2/G2.h"
 #include "qcommon/q_shared.h"
 #include "jkg_damageareas.h"
@@ -178,16 +179,15 @@ static	vec3_t	muzzle;
 #define MAX_PLACEABLE_CONSUME_WPNS			20		//default: 10 (used by tripmines and detonators)
 
 
-const weaponFireModeStats_t *GetEntsCurrentFireMode ( const gentity_t *ent )
+const weaponFireModeStats_t *GetEntsCurrentFireMode( const gentity_t *ent, const weaponData_t* weapon )
 {
-    const weaponData_t *weapon = GetWeaponData (ent->s.weapon, ent->s.weaponVariation);
-	const weaponFireModeStats_t *fireMode = &weapon->firemodes[ent->s.firingMode];
-	/*if ( ent->s.eFlags & EF_ALT_FIRING )
-	{
-	    fireMode = &weapon->firemodes[1];
-	}*/
-	
-	return fireMode;
+	return &weapon->firemodes[ent->s.firingMode];
+}
+
+const weaponFireModeStats_t *GetEntsCurrentFireMode( const gentity_t *ent )
+{
+	const weaponData_t *weapon = GetWeaponData(ent->s.weapon, ent->s.weaponVariation);
+	return GetEntsCurrentFireMode(ent, weapon);
 }
 
 extern qboolean G_BoxInBounds( vec3_t point, vec3_t mins, vec3_t maxs, vec3_t boundsMins, vec3_t boundsMaxs );
@@ -2756,13 +2756,7 @@ void WP_CalculateSpread( float *pitch, float *yaw, float accuracyRating, float m
 **************************************************/
 static void WP_GetWeaponDirection( gentity_t *ent, int firemode, const vec3_t forward, vec3_t direction )
 {
-
-	weaponData_t	*thisWeaponData = GetWeaponData( ent->s.weapon, ent->s.weaponVariation );
-	double				 fKnockBack		= ( double )thisWeaponData->firemodes[firemode].baseDamage;
-	float			 fSpreadModifiers = 1.0f;
-	vec3_t			 fAngles;
-
-	JKG_ApplyAmmoOverride(fKnockBack, ammoTable[ent->s.ammoType].overrides.knockback);
+	vec3_t fAngles;
 		
 	/* Convert the forward to angle's to be able to modify it */
 	vectoangles( forward, fAngles );
@@ -2776,42 +2770,45 @@ static void WP_GetWeaponDirection( gentity_t *ent, int firemode, const vec3_t fo
 		// Stationary			= Very Accurate
 		// Stationary + Crouch	= Pinpoint Accuracy
 
-		bool bIsCrouching	= ent->client->ps.pm_flags & PMF_DUCKED;
-		bool bIsMoving		= ( ent->client->pers.cmd.forwardmove || ent->client->pers.cmd.rightmove || ent->client->pers.cmd.upmove > 0 );
-		bool bIsWalking		= (ent->client->pers.cmd.buttons & BUTTON_WALKING) && !BG_IsSprinting (&ent->client->ps, &ent->client->pers.cmd, qfalse);
-		bool bInIronsights  = (ent->client->pers.cmd.buttons & BUTTON_IRONSIGHTS);
-		bool bIsInAir		= (ent->client->ps.groundEntityNum == ENTITYNUM_NONE);
+		gclient_t *cl = ent->client;
+		const bool bIsCrouching	= cl->ps.pm_flags & PMF_DUCKED;
+		const bool bIsMoving	= ( cl->pers.cmd.forwardmove || cl->pers.cmd.rightmove || cl->pers.cmd.upmove > 0 );
+		const bool bIsWalking	= (cl->pers.cmd.buttons & BUTTON_WALKING) && !BG_IsSprinting (&cl->ps, &cl->pers.cmd, qfalse);
+		const bool bInIronsights  = (cl->pers.cmd.buttons & BUTTON_IRONSIGHTS);
+		const bool bIsInAir		= (cl->ps.groundEntityNum == ENTITYNUM_NONE);
 
-		int nAccuracyBaseRating = thisWeaponData->firemodes[firemode].weaponAccuracy.accuracyRating;
-		JKG_ApplyAmmoOverride(nAccuracyBaseRating, ammoTable[ent->s.ammoType].overrides.accuracyRatingBase);
+		const weaponData_t *thisWeaponData = GetWeaponData( ent->s.weapon, ent->s.weaponVariation );
+		const weaponFireModeStats_t* fireMode = GetEntsCurrentFireMode(ent, thisWeaponData);
+		const weaponAccuracyDetails_t* weaponAccuracy = &fireMode->weaponAccuracy;
+		const ammo_t *currentAmmo = ammoTable + ent->s.ammoType;
 
-		int nAccuracyRating = nAccuracyBaseRating + ent->client->ps.stats[STAT_ACCURACY];
-
-		int accuracyDrainDebounce = ( ent->client->accuracyDebounce > level.time ) ? 0 : thisWeaponData->firemodes[firemode].weaponAccuracy.msToDrainAccuracy;
+		float fSpreadModifiers = 1.0f;
+		double fKnockBack = ( double )fireMode->baseDamage;
+		JKG_ApplyAmmoOverride(fKnockBack, currentAmmo->overrides.knockback);
 
 		/* Client is in air, might be using a jetpack or something, add some slop! */
 		if ( bIsInAir )
 		{
-			fSpreadModifiers *= thisWeaponData->firemodes[firemode].weaponAccuracy.inAirModifier;
+			fSpreadModifiers *= weaponAccuracy->inAirModifier;
 			fKnockBack	*= 3.00f;
 		}
 		/* Client is currently running and not walking and/or crouching, a different slop value */
 		else if ( !bIsCrouching && bIsMoving && !bIsWalking )
 		{
-			fSpreadModifiers *= thisWeaponData->firemodes[firemode].weaponAccuracy.crouchModifier;
+			fSpreadModifiers *= weaponAccuracy->crouchModifier;
 			fKnockBack	*= 2.00f;
 		}
 		/* Client is walking around and is not crouching, somewhat better accuracy then running */
 		else if ( bIsMoving && bIsWalking && !bIsCrouching )
 		{
-			fSpreadModifiers *= thisWeaponData->firemodes[firemode].weaponAccuracy.walkModifier;
+			fSpreadModifiers *= weaponAccuracy->walkModifier;
 			fKnockBack	*= 1.55f;
 		}
 		/* Client is crouching, even less spread. */
 		else if ( bIsMoving && bIsWalking && bIsCrouching )
 		{
-			fSpreadModifiers *= thisWeaponData->firemodes[firemode].weaponAccuracy.crouchModifier;
-			fSpreadModifiers *= thisWeaponData->firemodes[firemode].weaponAccuracy.walkModifier;
+			fSpreadModifiers *= weaponAccuracy->crouchModifier;
+			fSpreadModifiers *= weaponAccuracy->walkModifier;
 			fKnockBack	*= 1.35f;
 		}
 		/* Client is stationary and not crouching. Very good accuracy. */
@@ -2822,21 +2819,20 @@ static void WP_GetWeaponDirection( gentity_t *ent, int firemode, const vec3_t fo
 		/* Client is crouching and stationary, pinpoint accuracy. Code for demonstrative purposes only! */
 		else
 		{
-			fSpreadModifiers *= thisWeaponData->firemodes[firemode].weaponAccuracy.crouchModifier;
+			fSpreadModifiers *= weaponAccuracy->crouchModifier;
 			fKnockBack	*= 1.0f;
 		}
 			
 		/* The sights modifier is altered based on how far into scoping we are.
 		 * This prevents "no-scoping" as seen in Call of Duty
 		 */
-		float phase = JKG_CalculateIronsightsPhase(&ent->client->ps, level.time, &ent->client->ironsightsBlend);
-		float sightsDiff = thisWeaponData->firemodes[firemode].weaponAccuracy.sightsModifier - 1.0f;
-		float adjustedSightsDiff = sightsDiff * phase;
-		float finalSightsModifier = 1.0f + adjustedSightsDiff;
+		const float phase = JKG_CalculateIronsightsPhase(&cl->ps, level.time, &cl->ironsightsBlend);
+		const float sightsDiff = weaponAccuracy->sightsModifier - 1.0f;
+		const float adjustedSightsDiff = sightsDiff * phase;
+		const float finalSightsModifier = 1.0f + adjustedSightsDiff;
 
 		/* Additional stabilising factor is in ironsights */
-		if ( !bIsMoving && !bIsInAir &&
-			bInIronsights )
+		if ( !bIsMoving && !bIsInAir && bInIronsights )
 		{
 			fSpreadModifiers *= finalSightsModifier;
 			fKnockBack  *= 0.8f;
@@ -2847,6 +2843,10 @@ static void WP_GetWeaponDirection( gentity_t *ent, int firemode, const vec3_t fo
 		}
 
 		/* We have some extra slop to add, so let's add it now */
+		int nAccuracyBaseRating = weaponAccuracy->accuracyRating;
+		JKG_ApplyAmmoOverride(nAccuracyBaseRating, currentAmmo->overrides.accuracyRatingBase);
+
+		const int nAccuracyRating = nAccuracyBaseRating + cl->ps.stats[STAT_ACCURACY];
 		if( nAccuracyRating )
 		{
 			float pitch = 1.0f; // just putting in a dummy value here
@@ -2858,39 +2858,37 @@ static void WP_GetWeaponDirection( gentity_t *ent, int firemode, const vec3_t fo
 			fAngles[YAW] += yaw;
 		}
 
+		int accuracyDrainDebounce = ( cl->accuracyDebounce > level.time ) ? 0 : weaponAccuracy->msToDrainAccuracy;
 		/* We get more and more inaccurate every time we fire.
 		If we're firing from an awkward position (such as being
 		in mid-air), it takes us longer to recover from that shot. */
 		accuracyDrainDebounce *= fSpreadModifiers;
 
-		ent->client->accuracyDebounce = level.time + accuracyDrainDebounce;
+		cl->accuracyDebounce = level.time + accuracyDrainDebounce;
 
-		int nAccuracyRatingPerShot = thisWeaponData->firemodes[firemode].weaponAccuracy.accuracyRatingPerShot;
+		int nAccuracyRatingPerShot = weaponAccuracy->accuracyRatingPerShot;
+		JKG_ApplyAmmoOverride(nAccuracyRatingPerShot, currentAmmo->overrides.accuracyRatingPerShot);
 
-		JKG_ApplyAmmoOverride(nAccuracyRatingPerShot, ammoTable[ent->s.ammoType].overrides.accuracyRatingPerShot);
+		cl->ps.stats[STAT_ACCURACY] = Q_min(
+			cl->ps.stats[STAT_ACCURACY] + nAccuracyRatingPerShot,
+			weaponAccuracy->maxAccuracyAdd);
 
-		ent->client->ps.stats[STAT_ACCURACY] += nAccuracyRatingPerShot;
-		if( ent->client->ps.stats[STAT_ACCURACY] > thisWeaponData->firemodes[firemode].weaponAccuracy.maxAccuracyAdd )
+		/* See if we have a decent knockback on this weapon! */
+		if ( thisWeaponData->hasKnockBack )
 		{
-			ent->client->ps.stats[STAT_ACCURACY] = thisWeaponData->firemodes[firemode].weaponAccuracy.maxAccuracyAdd;
-		}
-	}
+			vec3_t dir;
 
-	/* See if we have a decent knockback on this weapon! */
-	if ( thisWeaponData->hasKnockBack )
-	{
-		vec3_t dir;
-
-		/* Get the forward angle vector for this client */
-		AngleVectors( ent->client->ps.viewangles, dir, NULL, NULL );
-		VectorMA( ent->client->ps.velocity, -fKnockBack, dir, ent->client->ps.velocity );
-		dir[YAW] = -dir[YAW];
-			
-		if ( fKnockBack > 280.0f )
-		{
-			Jetpack_Off( ent );
-			G_Knockdown( ent, NULL, dir, fKnockBack, qtrue );
-			G_Damage( ent, ent, ent, dir, ent->client->ps.origin, fKnockBack / 20, DAMAGE_NO_KNOCKBACK | DAMAGE_NO_SHIELD, MOD_UNKNOWN );
+			/* Get the forward angle vector for this client */
+			AngleVectors( cl->ps.viewangles, dir, NULL, NULL );
+			VectorMA( cl->ps.velocity, -fKnockBack, dir, cl->ps.velocity );
+			dir[YAW] = -dir[YAW];
+				
+			if ( fKnockBack > 280.0f )
+			{
+				Jetpack_Off( ent );
+				G_Knockdown( ent, NULL, dir, fKnockBack, qtrue );
+				G_Damage( ent, ent, ent, dir, cl->ps.origin, fKnockBack / 20, DAMAGE_NO_KNOCKBACK | DAMAGE_NO_SHIELD, MOD_UNKNOWN );
+			}
 		}
 	}
 
