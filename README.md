@@ -16,7 +16,7 @@
 #### Downloads ####
 The most update links are available on the download page on the website, under the [test releases section](https://www.jkgalaxies.net/download.html#testdiv), but you can also use the following links which are occasionally updated:
 
-[Binaries](https://github.com/JKGDevs/JediKnightGalaxies/releases/) , [Assets](https://uvu.box.com/shared/static/lztt5mayu4daj9szvg8v0rtds6vwmnmq.zip) , 
+[Binaries](https://github.com/JKGDevs/JediKnightGalaxies/releases/) , [Assets](https://uvu.box.com/shared/static/ctdly3jwnhjcji560sx1czfdgnahbtzi.zip) , 
 [Map Bundle #1](http://jkhub.org/files/file/2652-jedi-knight-galaxies-map-bundle-1/) , [Map Bundle #2](https://uvu.box.com/shared/static/kb0wvyqtz0sarzs0kn1c8h03wrpjgb7c.zip)
 
 Please use discretion when making issue requests on GitHub. The forum is a better place for larger discussions on changes that aren't actually bugs.
@@ -38,11 +38,11 @@ Welcome to Jedi Knight Galaxies, where we break the limits!
 [Flate's Ubuntu/Debian Guide](https://github.com/JKGDevs/JediKnightGalaxies/wiki/Flate%27s-Debian-Ubuntu-Compiling-Guide)
 
 ## Installation of Game ##
-JKG is available on Windows, but it will compile with linux and OSX and has been briefly tested to run on Ubuntu.
+JKG is available for Windows, but it will compile with linux and OSX and has been briefly tested to run on Ubuntu.
 
 To install, you will first need Jedi Academy installed. If you don't already own the game you can buy it from online stores such as [Steam](http://store.steampowered.com/app/6020/), [Amazon](http://www.amazon.com/Star-Wars-Jedi-Knight-Academy-Pc/dp/B0000A2MCN), or [GOG](https://www.gog.com/game/star_wars_jedi_knight_jedi_academy).
 
-There are a few ways to actually install JKG itself, the simplest is to just get the [binaries](https://github.com/JKGDevs/JediKnightGalaxies/releases) and [assets](https://uvu.box.com/shared/static/lztt5mayu4daj9szvg8v0rtds6vwmnmq.zip), and then follow the directions in the readme included.  Please note that while we try to keep these relatively up to date, the github will always contain the most current version of the source code and you can always compile and pack the pk3s yourself to get a more up to date version.  Most of the JKG assets are not stored on this github repository, only source code and code-like assets.
+There are a few ways to actually install JKG itself, the simplest is to just get the [binaries](https://github.com/JKGDevs/JediKnightGalaxies/releases) and [assets](https://uvu.box.com/shared/static/ctdly3jwnhjcji560sx1czfdgnahbtzi.zip), and then follow the directions in the readme included.  Please note that while we try to keep these relatively up to date, the github will always contain the most current version of the source code and you can always compile and pack the pk3s yourself to get a more up to date version.  Most of the JKG assets are not stored on this github repository, only source code and code-like assets.
 
 Alternatively you can install the assets and binaries inside a directory such as C:\JKG\ and then use a batch file/command line arguments to open jkgalaxies.x86.exe while pointing it to the Jedi Academy assets.  This is the recommended setup for developers, as you can then call your exe's location with appropriate args directly from your IDE.  You can do this by setting the fs_basepath arg to be equal to your Jedi Academy install location.  You'll also want to set the fs_cdpath to be equal to JKG's directory.  Optionally you can use fs_homepath to store screenshots and other user specific information, if not specified fs_homepath will be set to "...Documents\My Games\JKGalaxies"  For example, use this batch script on steam installs for windows:
 
@@ -87,7 +87,7 @@ These are very much subject to change, especially phases later than Versus.
 * The goal here is to have a functioning arena based shooter (similar to games such as Call of Duty or Unreal Tournament) with the beginnings of some later RPG elements such as armor, pazaak card game, etc.  There are three major milestones currently being worked on: [Milestone 3](https://github.com/JKGDevs/JediKnightGalaxies/issues?q=issue+milestone%3A%22Versus+Revision+3%22) and [Milestone 4](https://github.com/JKGDevs/JediKnightGalaxies/issues?q=is%3Aopen+is%3Aissue+milestone%3A%22Versus+Revision+4%22).  Milestone 3 includes new features like better melee, armor, shields, jetpacks, debuff system etc. in addition to some bug fixes not addressed in Milestone 2. Milestone 4 primarily focuses on the all new saber system and related features such as duel mode.  Later on other milestones will be worked on.  In Milestone 5, the Force will be reworked and greatly expanded on.  Later milestones will introduce the skill trees and a rudimentary system for spending xp in preparation for the eventual leveling system in Phase 2 and 3.
 
 #### Phase 2: Coop ####
-* The main features that are added here include the NPC system and fleshing out of the dialogue system. They also include overhauls to the chat systems, fonts, UI, and more.  Prep work for the leveling system and quest system to be introduced here.  We may also attempt some MoBA like features (still needs discussion).
+* The main features that are added here include the NPC system and fleshing out of the dialogue system. They also include overhauls to the chat systems, fonts, UI, and more.  Prep work for the leveling system and quest system to be introduced here.  Gameplay will primarily consist of teams of players (or individuals) completing simple 'quest' objectives, while being opposed by NPCs, or other teams of players.  The game will revolve around a major central city hub (likely Mos Eisley) from which player's can interact with NPCs and other players to start quests, form teams, and explore the world.  Most quests that do not take part in the central city, will load a team of player's into an 'instance' where they will complete their quest objectives while isolated from other players.  We may also attempt some MoBA like features (still needs discussion) in larger Phase 1 style matches.
 
 #### Phase 3: RPG ####
 * Open World RPG. The main features added here include quests, (more) minigames, and AI for existing minigames, like Pazaak. Also includes levelling up, experience, single person quests, large planet-themed maps, character creator, fully fleshed out skill system etc. This mode will mainly focus on implementing things from a single player's perspective.  Data will be persistent and exist as long as the server is running.
@@ -98,7 +98,7 @@ These are very much subject to change, especially phases later than Versus.
 
 
 ## Version Information ##
-JKG uses the following version schema: Phase.Major.Minor with an optional "patch" letter following the minor version for hotfixes (these are unplanned versions).  Phases represent collosal changes to the game (these are often called expansions in other games) that include major new features and gameplay changes and even engine changes!  Phases can considered seperate games.  Major versions represent completions of milestones that include several new features and bug fixes.  Minor versions represent small incremental changes within a milestone and usually represent a single new feature or bug fixes.  Other software produced by the developers (such as the launcher) uses its own versioning scheme and is not covered in this readme.
+JKG uses the following version schema: Phase.Major.Minor with an optional "patch" letter following the minor version for hotfixes (these are unplanned versions).  Phases represent collosal changes to the game (these are often called 'expansions' in other games) that include major new features and gameplay changes and even engine changes!  Phases should be considered seperate games.  Major versions represent completions of milestones that include several key new features and bug fixes.  Minor versions represent small incremental changes within a milestone and usually represent a single new feature or small set of features and/or bug fixes.  Other software produced by the developers (such as the launcher) uses its own versioning scheme and is not covered in this readme.
 
 
 
@@ -174,9 +174,12 @@ Thank you to the following for your support of JKG and your efforts in contribut
 
 
 * Arkan (Mapping)
+* Daggo (server list)
 * Dalo Lorn
+* Flate (jk2t.ddns.net mirror and build help)
 * Hapslash (Stormtrooper Model)
 * Inyri Forge (Instruments & KotOR Objects)
+* John/GCJ (Linux Debugging/Server Hosting)
 * Krattle (Chalmun’s Cantina)
 * MountainDew
 * Nightcrawler
