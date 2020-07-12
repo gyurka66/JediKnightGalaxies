@@ -4417,7 +4417,7 @@ static void BG_StartLegsAnim( playerState_t *ps, int anim )
 {
 	if ( ps->pm_type >= PM_DEAD )
 	{
-		assert(!BG_InDeathAnim(anim));
+		//assert(!BG_InDeathAnim(anim));	//--futuza: commenting out for now, can cause issues on debug mode when using melee, rolls, and jetpacks
 		//please let me know if this assert fires on you (ideally before you close/ignore it) -rww
 
 		//vehicles are allowed to do this.. IF it's a vehicle death anim
@@ -4493,7 +4493,7 @@ void BG_StartTorsoAnim( playerState_t *ps, int anim )
 {
 	if ( ps->pm_type >= PM_DEAD )
 	{
-		assert(!BG_InDeathAnim(anim));
+		//assert(!BG_InDeathAnim(anim));	//--futuza: commenting out for now, can cause issues on debug mode when using melee, rolls, and jetpacks
 		//please let me know if this assert fires on you (ideally before you close/ignore it) -rww
 		return;
 	}
