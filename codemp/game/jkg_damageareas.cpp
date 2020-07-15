@@ -361,6 +361,8 @@ static void DebuffPlayer ( gentity_t *player, damageArea_t *area, int damage, in
 		}
 
 		G_Damage(player, area->context.inflictor, area->context.attacker, dir, player->client->ps.origin, damage, flags | area->context.damageFlags, mod);
+
+		area->lastDamageTime = level.time;
 	}
 
 	if (mod > 0 && mod < allMeansOfDamage.size())
@@ -377,7 +379,7 @@ static void DebuffPlayer ( gentity_t *player, damageArea_t *area, int damage, in
     VectorNormalize (dir);
 
 	// Do ammo type override for debuffs
-	memcpy(debuffs, area->data->debuffs, sizeof(debuffData_t) * MAX_DEBUFFS_PRESENT);
+	memcpy(debuffs, area->data->debuffs, sizeof(debuffs));
 	numDebuffs = area->data->numberDebuffs;
 	ammoType = area->context.ammoType;
 	if (area->context.attacker->client && ammoType >= 0)
@@ -492,8 +494,6 @@ static void DebuffPlayer ( gentity_t *player, damageArea_t *area, int damage, in
 		G_BuffEntity(player, area->context.attacker, 
 			debuffs[i].debuff, debuffs[i].intensity, debuffs[i].duration);
 	}
-    
-    area->lastDamageTime = level.time;
 }
 
 /*
@@ -595,9 +595,6 @@ static qboolean DamagePlayersInArea ( damageArea_t *area )
                 continue;
             }
         }
-        
-        // Check for armor etc
-        // if 
         
         // Apply the damage and its effects.
         damage = CalculateDamageForDistance (area, ent->r.absmin, ent->r.absmax, playerOrigin, damageRadius);
