@@ -632,7 +632,6 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 						JKG_DoDecayDamage(&fireMode->secondary, other, ent, &g_entities[ent->r.ownerNum], velocity, ent->r.currentOrigin, 0, ent->methodOfDeath, distance, ent->range, ent->decayRate);
 					}
 				}
-
 				else
 				{
 					JKG_DoDamage(&fireMode->primary, other, ent, &g_entities[ent->r.ownerNum], velocity, ent->r.currentOrigin, 0, ent->methodOfDeath);
@@ -640,26 +639,6 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 					if (fireMode->secondaryDmgPresent)
 					{
 						JKG_DoDamage(&fireMode->secondary, other, ent, &g_entities[ent->r.ownerNum], velocity, ent->r.currentOrigin, 0, ent->methodOfDeath);
-					}
-				}
-
-				if (other->client)
-				{ //What I'm wondering is why this isn't in the NPC pain funcs. But this is what SP does, so whatever.
-					class_t	npc_class = other->client->NPC_class;
-
-					// If we are a robot and we aren't currently doing the full body electricity...
-					if (npc_class == CLASS_SEEKER || npc_class == CLASS_PROBE || npc_class == CLASS_MOUSE ||
-						npc_class == CLASS_GONK || npc_class == CLASS_R2D2 || npc_class == CLASS_R5D2 || npc_class == CLASS_REMOTE ||
-						npc_class == CLASS_MARK1 || npc_class == CLASS_MARK2 || //npc_class == CLASS_PROTOCOL ||//no protocol, looks odd
-						npc_class == CLASS_INTERROGATOR || npc_class == CLASS_ATST || npc_class == CLASS_SENTRY)
-					{
-						// special droid only behaviors
-						if (other->client->ps.electrifyTime < level.time + 100)
-						{
-							// ... do the effect for a split second for some more feedback
-							other->client->ps.electrifyTime = level.time + 450;
-						}
-						//FIXME: throw some sparks off droids,too
 					}
 				}
 			}
