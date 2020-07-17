@@ -609,50 +609,44 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 		weaponData_t *weapon = GetWeaponData (ent->s.weapon, ent->s.weaponVariation);
 		weaponFireModeStats_t *fireMode = &weapon->firemodes[ent->s.firingMode];
 		
-		if ( ent->damage ) {
-			vec3_t	velocity;
+		vec3_t	velocity;
 
-			BG_EvaluateTrajectoryDelta( &ent->s.pos, level.time, velocity );
-			if ( VectorLength( velocity ) == 0 ) {
-				velocity[2] = 1;	// stepped on a grenade
-			}
+		BG_EvaluateTrajectoryDelta( &ent->s.pos, level.time, velocity );
+		if ( VectorLength( velocity ) == 0 ) {
+			velocity[2] = 1;	// stepped on a grenade
+		}
 
-			float distance = Distance(ent->s.pos.trBase, ent->r.currentOrigin); //check how far we shot
+		float distance = Distance(ent->s.pos.trBase, ent->r.currentOrigin); //check how far we shot
 
-			/* We're in range to do damage*/
-			if (distance < ent->maxRange)
-			{
-				/* We fired beyond the weapon's recommended range and should do less dmg*/
-				if (ent->maxRange != ent->range && distance > ent->range)
-				{
-					JKG_DoDecayDamage(&fireMode->primary, other, ent, &g_entities[ent->r.ownerNum], velocity, ent->r.currentOrigin, 0, ent->methodOfDeath, distance, ent->range, ent->decayRate);
+		/* We're in range to do damage*/
+		if (distance < ent->maxRange)
+		{
+			damageDecay_t decay = {};
+			decay.maxRange = ent->maxRange;
+			decay.recommendedRange = ent->range;
+			decay.distanceToDamageOrigin = distance;
+			decay.decayRate = ent->decayRate;
 
-					if (fireMode->secondaryDmgPresent)
-					{
-						JKG_DoDecayDamage(&fireMode->secondary, other, ent, &g_entities[ent->r.ownerNum], velocity, ent->r.currentOrigin, 0, ent->methodOfDeath, distance, ent->range, ent->decayRate);
-					}
-				}
-				else
-				{
-					JKG_DoDamage(&fireMode->primary, other, ent, &g_entities[ent->r.ownerNum], velocity, ent->r.currentOrigin, 0, ent->methodOfDeath);
-
-					if (fireMode->secondaryDmgPresent)
-					{
-						JKG_DoDamage(&fireMode->secondary, other, ent, &g_entities[ent->r.ownerNum], velocity, ent->r.currentOrigin, 0, ent->methodOfDeath);
-					}
-				}
-			}
+			JKG_DoDamage(
+				fireMode,
+				g_entities + ent->r.ownerNum,
+				ent,
+				ent,
+				velocity,
+				ent->r.currentOrigin,
+				DAMAGE_NO_KNOCKBACK,
+				ent->methodOfDeath,
+				&decay);
 		}
 	}
+
 killProj:
 	// is it cheaper in bandwidth to just remove this ent and create a new
 	// one, rather than changing the missile into the explosion?
 
 	if ( other->takedamage && other->client && !isKnockedSaber ) {
-		{
-			G_AddEvent( ent, EV_MISSILE_HIT, DirToByte( trace->plane.normal ) );
-			ent->s.otherEntityNum = other->s.number;
-		}
+		G_AddEvent( ent, EV_MISSILE_HIT, DirToByte( trace->plane.normal ) );
+		ent->s.otherEntityNum = other->s.number;
 	} else if( trace->surfaceFlags & SURF_METALSTEPS ) {
 		G_AddEvent( ent, EV_MISSILE_MISS_METAL, DirToByte( trace->plane.normal ) );
 	} else if (ent->s.weapon != G2_MODEL_PART && !isKnockedSaber) {
@@ -676,21 +670,6 @@ killProj:
 	if (ent->s.weapon == G2_MODEL_PART)
 	{
 		ent->freeAfterEvent = qfalse; //it will free itself
-	}
-
-	if(ent->splashRadius && ent->splashDamage && !ent->genericValue10)
-	{
-		//to consider here:
-		//reduce splash damage for certain missile types that are fired 
-		//while keeping other types unaltered (eg: rockets shouldn't be affected, energy blasts should)
-
-		//why call G_RadiusDamage directly instead of JKG_DoSplashDamage()?  This prevents us from being able to do area debuffs etc.  Needs improvement.  --Futuza
-		G_RadiusDamage(trace->endpos, &g_entities[ent->r.ownerNum], ent->splashDamage, ent->splashRadius, NULL, ent, ent->methodOfDeath);  
-
-		//VV---to do: test if the below is a suitable replacement---VV
-		/*weaponData_t* weapon = GetWeaponData(ent->s.weapon, ent->s.weaponVariation);
-		weaponFireModeStats_t* fireMode = &weapon->firemodes[ent->s.firingMode];
-		JKG_DoSplashDamage(&fireMode->primary, trace->endpos, ent, &g_entities[ent->r.ownerNum], NULL, ent->methodOfDeath);*/
 	}
 
 	trap->LinkEntity( (sharedEntity_t *)ent );

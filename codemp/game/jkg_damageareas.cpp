@@ -1,5 +1,6 @@
 #include "jkg_damageareas.h"
 #include "g_local.h"
+#include "game/bg_weapons.h"
 #include "qcommon/q_shared.h"
 
 static std::vector<damageArea_t> damageAreas;
@@ -616,6 +617,14 @@ int JKG_ChargeDamageOverride( gentity_t *inflictor, bool bIsTraceline ) {
 	return damage;
 }
 
+void JKG_DoDirectDamage(weaponFireModeStats_t* fireMode, gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t origin, int dflags, int mod, const damageDecay_t *decay)
+{
+	JKG_DoDirectDamage(&fireMode->primary, targ, inflictor, attacker, dir, origin, dflags, mod, decay);
+	if (fireMode->secondaryDmgPresent) {
+		JKG_DoDirectDamage(&fireMode->secondary, targ, inflictor, attacker, dir, origin, dflags, mod, decay);
+	}
+}
+
 //=========================================================
 // JKG_DoDirectDamage
 //---------------------------------------------------------
@@ -624,7 +633,17 @@ int JKG_ChargeDamageOverride( gentity_t *inflictor, bool bIsTraceline ) {
 // damage areas. It only does direct damage like with
 // G_Damage.   
 //=========================================================
-void JKG_DoDirectDamage(damageSettings_t *data, gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t origin, int dflags, int mod) {
+void JKG_DoDirectDamage(
+    damageSettings_t *data,
+    gentity_t *targ,
+    gentity_t *inflictor,
+    gentity_t *attacker,
+    vec3_t dir,
+    vec3_t origin,
+    int dflags,
+    int mod,
+    const damageDecay_t *decay)
+{
 	damageArea_t area;
 	int damage;
 
@@ -646,6 +665,18 @@ void JKG_DoDirectDamage(damageSettings_t *data, gentity_t *targ, gentity_t *infl
 		damage = area.context.damageOverride;
 	} else {
 		damage = data->damage;
+	}
+
+	if (decay != nullptr) {
+		if (decay->maxRange > decay->recommendedRange &&
+			decay->distanceToDamageOrigin < decay->maxRange) {
+			/* Fired at a distance beyond recommended range. */
+			damage = JKG_CalculateDamageDecay(
+				damage,
+				decay->distanceToDamageOrigin,
+				decay->recommendedRange,
+				decay->decayRate);
+		}
 	}
 
 	VectorCopy(dir, area.context.direction);
@@ -744,84 +775,22 @@ void JKG_DoSplashDamage( damageSettings_t* data, const vec3_t origin, gentity_t 
     }
 }
 
-////=========================================================
-// JKG_DoDecayDamage
-//---------------------------------------------------------
-// Description: This is a wrapper for the JKG_DoDamage
-// function, handles special cases when weapons have been
-// fired beyond maximum range and their damage is reduced.
-//=========================================================
-void JKG_DoDecayDamage(damageSettings_t* data, gentity_t* targ, gentity_t* inflictor, gentity_t* attacker, vec3_t dir, vec3_t origin, int dflags, int mod, float distance, float range, float decayRate)
+void JKG_DoDamage(
+	weaponFireModeStats_t *fireMode,
+	gentity_t *targ,
+	gentity_t *inflictor,
+	gentity_t *attacker,
+	vec3_t dir,
+	vec3_t origin,
+	int dflags,
+	int mod,
+	const damageDecay_t *decay)
 {
-	//todo: check this works --futuza
-	if (data->radial)
-	{
-		JKG_DoSplashDamage(data, origin, inflictor, attacker, NULL, mod);
+	JKG_DoDamage(&fireMode->primary, targ, inflictor, attacker, dir, origin, dflags, mod, decay);
+	if (fireMode->secondaryDmgPresent) {
+		JKG_DoDamage(&fireMode->secondary, targ, inflictor, attacker, dir, origin, dflags, mod, decay);
 	}
-
-	damageArea_t area;
-	int damage;
-
-	if (!targ->takedamage)
-	{
-		return;
-	}
-
-	if (targ->health <= 0)
-	{
-		return;
-	}
-
-	memset(&area, 0, sizeof(area));
-
-	area.data = data;
-
-	// The firing mode's base damage can lie! It doesn't account for dynamic damage amounts (ie weapon charging)
-	area.context.damageOverride = JKG_ChargeDamageOverride(inflictor, inflictor == attacker);
-	if (area.context.damageOverride != 0 && area.data->damage != area.context.damageOverride)
-	{
-		damage = area.context.damageOverride;
-	}
-	else
-	{
-		damage = data->damage;
-	}
-
-	VectorCopy(dir, area.context.direction);
-	if (attacker->client && attacker->client->ps.ammoType)
-	{
-		area.context.ammoType = attacker->client->ps.ammoType;
-		JKG_ApplyAmmoOverride(damage, ammoTable[area.context.ammoType].overrides.damage);
-	}
-	else
-	{
-		area.context.ammoType = -1;
-	}
-
-	if (decayRate > 0.0 && decayRate < 1.0)
-	{
-		damage = JKG_CalculateDamageDecay(damage, distance, range, decayRate);
-	}
-
-	//damaging an object?  different procedure (can't apply debuffs etc)
-	if (!targ->client)
-	{
-		G_Damage(targ, inflictor, attacker, dir, origin, damage, dflags, mod);
-		return;
-	}
-
-	area.context.ignoreEnt = NULL;
-	area.context.attacker = attacker;
-	area.context.damageFlags = dflags;
-	area.context.inflictor = inflictor;
-	area.context.methodOfDeath = mod;
-	area.startTime = level.time;
-	area.lastDamageTime = 0;
-	VectorCopy(origin, area.origin);
-
-	DebuffPlayer(targ, &area, damage, mod);
 }
-
 
 //=========================================================
 // JKG_DoDamage
@@ -839,13 +808,14 @@ void JKG_DoDamage(
 	vec3_t dir,
 	vec3_t origin,
 	int dflags,
-	int mod)
+	int mod,
+	const damageDecay_t* decay)
 {
 	if (data->radial) {
 		JKG_DoSplashDamage(data, origin, inflictor, attacker, NULL, mod);
 	}
 
-	JKG_DoDirectDamage(data, targ, inflictor, attacker, dir, origin, dflags, mod);
+	JKG_DoDirectDamage(data, targ, inflictor, attacker, dir, origin, dflags, mod, decay);
 }
 
 //=========================================================

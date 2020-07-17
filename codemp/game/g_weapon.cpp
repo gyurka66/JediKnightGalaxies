@@ -27,6 +27,7 @@ along with this program; if not, see <http://www.gnu.org/licenses/>.
 #include "g_local.h"
 #include "botlib/be_aas.h"
 #include "bg_saga.h"
+#include "game/bg_public.h"
 #include "game/bg_weapons.h"
 #include "ghoul2/G2.h"
 #include "qcommon/q_shared.h"
@@ -1180,12 +1181,7 @@ void DetPackBlow(gentity_t *self)
 
 	if ( self->target_ent )
 	{//we were attached to something, do *direct* damage to it!
-		JKG_DoDirectDamage(&fireMode->primary, self->target_ent, self, self->parent, vec3_origin, self->r.currentOrigin, 0, mod);
-		
-		if ( fireMode->secondaryDmgPresent )
-		{
-			JKG_DoDirectDamage(&fireMode->secondary, self->target_ent, self, self->parent, vec3_origin, self->r.currentOrigin, 0, mod);
-		}
+		JKG_DoDirectDamage(fireMode, self->target_ent, self, self->parent, vec3_origin, self->r.currentOrigin, 0, mod);
 	}
 	
 	JKG_DoSplashDamage(&fireMode->primary, self->r.currentOrigin, self, self->parent, self, mod);
@@ -1482,12 +1478,7 @@ void WP_FireStunBaton( gentity_t *ent, qboolean alt_fire )
 
 		G_Sound( tr_ent, CHAN_WEAPON, G_SoundIndex( va("sound/weapons/melee/punch%d", Q_irand(1, 4)) ) );
 
-		JKG_DoDamage (&fireMode->primary, tr_ent, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, mod);
-		
-		if ( fireMode->secondaryDmgPresent )
-		{
-		    JKG_DoDamage (&fireMode->secondary, tr_ent, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, mod);
-		}
+		JKG_DoDamage(fireMode, tr_ent, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, mod);
 
 		if (tr_ent->client)
 		{ //if it's a player then use the shock effect
@@ -2482,27 +2473,22 @@ void WP_FireGenericTraceLine( gentity_t *ent, int firemode )
 					/* We're in range to do damage*/
 					if (distance < fMaxRange)
 					{
-						/* Fired at a distance beyond recommended range. */
-						if (fMaxRange != fRange && distance < fMaxRange)
-						{
-							JKG_DoDecayDamage(&fireMode->primary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode), distance, fRange, fDecayRate);
+						damageDecay_t decay = {};
+						decay.maxRange = fMaxRange;
+						decay.recommendedRange = fRange;
+						decay.distanceToDamageOrigin = distance;
+						decay.decayRate = fDecayRate;
 
-							if (fireMode->secondaryDmgPresent)
-							{
-								JKG_DoDecayDamage(&fireMode->secondary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode), distance, fRange, fDecayRate);
-							}
-						}
-
-						/* Within range damage*/
-						else
-						{
-							JKG_DoDirectDamage(&fireMode->primary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode));
-
-							if (fireMode->secondaryDmgPresent)
-							{
-								JKG_DoDirectDamage(&fireMode->secondary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode));
-							}
-						}
+						JKG_DoDirectDamage(
+							fireMode,
+							traceEnt,
+							ent,
+							ent,
+							forward,
+							tr.endpos,
+							DAMAGE_NO_KNOCKBACK,
+							WP_GetWeaponMOD(ent, firemode),
+							&decay);
 					}
 				}
 			}
@@ -2535,27 +2521,22 @@ void WP_FireGenericTraceLine( gentity_t *ent, int firemode )
 			/* We're in range to do damage*/
 			if (distance < fMaxRange)
 			{
-				/* Fired at a distance beyond recommended range. */
-				if (fMaxRange != fRange && distance < fMaxRange)
-				{
-					JKG_DoDecayDamage(&fireMode->primary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode), distance, fRange, fDecayRate);
+				damageDecay_t decay = {};
+				decay.maxRange = fMaxRange;
+				decay.recommendedRange = fRange;
+				decay.distanceToDamageOrigin = distance;
+				decay.decayRate = fDecayRate;
 
-					if (fireMode->secondaryDmgPresent)
-					{
-						JKG_DoDecayDamage(&fireMode->secondary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode), distance, fRange, fDecayRate);
-					}
-				}
-
-				/* Within range damage*/
-				else
-				{
-					JKG_DoDirectDamage(&fireMode->primary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode));
-
-					if (fireMode->secondaryDmgPresent)
-					{
-						JKG_DoDirectDamage(&fireMode->secondary, traceEnt, ent, ent, forward, tr.endpos, DAMAGE_NO_KNOCKBACK, WP_GetWeaponMOD(ent, firemode));
-					}
-				}
+				JKG_DoDirectDamage(
+					fireMode,
+					traceEnt,
+					ent,
+					ent,
+					forward,
+					tr.endpos,
+					DAMAGE_NO_KNOCKBACK,
+					WP_GetWeaponMOD(ent, firemode),
+					&decay);
 			}
 
 			/* Remove the amount of damage hit on this client from our trace, this way even normal disruptor shots can continue! */
