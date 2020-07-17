@@ -617,14 +617,6 @@ int JKG_ChargeDamageOverride( gentity_t *inflictor, bool bIsTraceline ) {
 	return damage;
 }
 
-void JKG_DoDirectDamage(weaponFireModeStats_t* fireMode, gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t origin, int dflags, int mod, const damageDecay_t *decay)
-{
-	JKG_DoDirectDamage(&fireMode->primary, targ, inflictor, attacker, dir, origin, dflags, mod, decay);
-	if (fireMode->secondaryDmgPresent) {
-		JKG_DoDirectDamage(&fireMode->secondary, targ, inflictor, attacker, dir, origin, dflags, mod, decay);
-	}
-}
-
 //=========================================================
 // JKG_DoDirectDamage
 //---------------------------------------------------------
@@ -633,7 +625,7 @@ void JKG_DoDirectDamage(weaponFireModeStats_t* fireMode, gentity_t *targ, gentit
 // damage areas. It only does direct damage like with
 // G_Damage.   
 //=========================================================
-void JKG_DoDirectDamage(
+static void JKG_DoDirectDamage(
     damageSettings_t *data,
     gentity_t *targ,
     gentity_t *inflictor,
@@ -697,6 +689,14 @@ void JKG_DoDirectDamage(
 	VectorCopy(origin, area.origin);
 
 	DamageEntityAndDebuffPlayer(targ, &area, dir, damage);
+}
+
+void JKG_DoDirectDamage(weaponFireModeStats_t* fireMode, gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_t dir, vec3_t origin, int dflags, int mod, const damageDecay_t *decay)
+{
+	JKG_DoDirectDamage(&fireMode->primary, targ, inflictor, attacker, dir, origin, dflags, mod, decay);
+	if (fireMode->secondaryDmgPresent) {
+		JKG_DoDirectDamage(&fireMode->secondary, targ, inflictor, attacker, dir, origin, dflags, mod, decay);
+	}
 }
 
 // This is a _replacement_ function for G_RadiusDamage. It does all the same
@@ -775,23 +775,6 @@ void JKG_DoSplashDamage( damageSettings_t* data, const vec3_t origin, gentity_t 
     }
 }
 
-void JKG_DoDamage(
-	weaponFireModeStats_t *fireMode,
-	gentity_t *targ,
-	gentity_t *inflictor,
-	gentity_t *attacker,
-	vec3_t dir,
-	vec3_t origin,
-	int dflags,
-	int mod,
-	const damageDecay_t *decay)
-{
-	JKG_DoDamage(&fireMode->primary, targ, inflictor, attacker, dir, origin, dflags, mod, decay);
-	if (fireMode->secondaryDmgPresent) {
-		JKG_DoDamage(&fireMode->secondary, targ, inflictor, attacker, dir, origin, dflags, mod, decay);
-	}
-}
-
 //=========================================================
 // JKG_DoDamage
 //---------------------------------------------------------
@@ -800,7 +783,7 @@ void JKG_DoDamage(
 // create a damage area instead, if the handle does
 // splash damage.
 //=========================================================
-void JKG_DoDamage(
+static void JKG_DoDamage(
 	damageSettings_t* data,
 	gentity_t *targ,
 	gentity_t *inflictor,
@@ -816,6 +799,23 @@ void JKG_DoDamage(
 	}
 
 	JKG_DoDirectDamage(data, targ, inflictor, attacker, dir, origin, dflags, mod, decay);
+}
+
+void JKG_DoDamage(
+	weaponFireModeStats_t *fireMode,
+	gentity_t *targ,
+	gentity_t *inflictor,
+	gentity_t *attacker,
+	vec3_t dir,
+	vec3_t origin,
+	int dflags,
+	int mod,
+	const damageDecay_t *decay)
+{
+	JKG_DoDamage(&fireMode->primary, targ, inflictor, attacker, dir, origin, dflags, mod, decay);
+	if (fireMode->secondaryDmgPresent) {
+		JKG_DoDamage(&fireMode->secondary, targ, inflictor, attacker, dir, origin, dflags, mod, decay);
+	}
 }
 
 //=========================================================

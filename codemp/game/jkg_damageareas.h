@@ -57,16 +57,6 @@ void JKG_DoSplashDamage(
 	int mod);
 
 void JKG_DoDirectDamage(
-	damageSettings_t *data,
-	gentity_t *targ,
-	gentity_t *inflictor,
-	gentity_t *attacker,
-	vec3_t dir,
-	vec3_t origin,
-	int dflags,
-	int mod,
-	const damageDecay_t *decay = nullptr);
-void JKG_DoDirectDamage(
 	weaponFireModeStats_t *fireMode,
 	gentity_t *targ,
 	gentity_t *inflictor,

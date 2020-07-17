@@ -2465,31 +2465,28 @@ void WP_FireGenericTraceLine( gentity_t *ent, int firemode )
 			/* This isn't a client but can take damage, is a mover or a glass brush. Smash it up! */
 			if ( traceEnt->r.svFlags & SVF_GLASS_BRUSH || traceEnt->takedamage || traceEnt->s.eType == ET_MOVER )
 			{
-				if ( traceEnt->takedamage )
+				weaponFireModeStats_t *fireMode = (weaponFireModeStats_t*)GetEntsCurrentFireMode (ent);
+				float distance = Distance(start, tr.endpos);  //measure distance from origin to impact point
+
+				/* We're in range to do damage*/
+				if (distance < fMaxRange)
 				{
-					weaponFireModeStats_t *fireMode = (weaponFireModeStats_t*)GetEntsCurrentFireMode (ent);
-					float distance = Distance(start, tr.endpos);  //measure distance from origin to impact point
+					damageDecay_t decay = {};
+					decay.maxRange = fMaxRange;
+					decay.recommendedRange = fRange;
+					decay.distanceToDamageOrigin = distance;
+					decay.decayRate = fDecayRate;
 
-					/* We're in range to do damage*/
-					if (distance < fMaxRange)
-					{
-						damageDecay_t decay = {};
-						decay.maxRange = fMaxRange;
-						decay.recommendedRange = fRange;
-						decay.distanceToDamageOrigin = distance;
-						decay.decayRate = fDecayRate;
-
-						JKG_DoDirectDamage(
-							fireMode,
-							traceEnt,
-							ent,
-							ent,
-							forward,
-							tr.endpos,
-							DAMAGE_NO_KNOCKBACK,
-							WP_GetWeaponMOD(ent, firemode),
-							&decay);
-					}
+					JKG_DoDirectDamage(
+						fireMode,
+						traceEnt,
+						ent,
+						ent,
+						forward,
+						tr.endpos,
+						DAMAGE_NO_KNOCKBACK,
+						WP_GetWeaponMOD(ent, firemode),
+						&decay);
 				}
 			}
 			/* This always shows the sniper miss event, it's used for both primary and secondary fire. */
