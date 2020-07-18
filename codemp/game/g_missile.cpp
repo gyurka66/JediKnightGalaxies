@@ -672,6 +672,22 @@ killProj:
 		ent->freeAfterEvent = qfalse; //it will free itself
 	}
 
+	if (ent->splashRadius && ent->splashDamage && !ent->genericValue10)
+	{
+		//to consider here:
+		//reduce splash damage for certain missile types that are fired 
+		//while keeping other types unaltered (eg: rockets shouldn't be affected, energy blasts should)
+
+		//why call G_RadiusDamage directly instead of JKG_DoSplashDamage()?  This prevents us from being able to do area debuffs etc.  Needs improvement.  --Futuza
+		G_RadiusDamage(trace->endpos, &g_entities[ent->r.ownerNum], ent->splashDamage, ent->splashRadius, NULL, ent, ent->methodOfDeath);
+
+		//VV---to do: test if the below is a suitable replacement---VV
+		/*weaponData_t* weapon = GetWeaponData(ent->s.weapon, ent->s.weaponVariation);
+		weaponFireModeStats_t* fireMode = &weapon->firemodes[ent->s.firingMode];
+		JKG_DoSplashDamage(&fireMode->primary, trace->endpos, ent, &g_entities[ent->r.ownerNum], NULL, ent->methodOfDeath);*/
+
+	}
+
 	trap->LinkEntity( (sharedEntity_t *)ent );
 }
 
