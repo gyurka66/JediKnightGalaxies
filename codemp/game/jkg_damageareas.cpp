@@ -574,13 +574,11 @@ static void DamageEntitiesInArea(damageArea_t *area) {
 
 		// Apply the damage and its effects.
 		const int damage = CalculateDamageForDistance(area, ent->r.absmin, ent->r.absmax, entOrigin, damageRadius);
-		if (damage != 0) {
-			vec3_t dir;
-			VectorSubtract(entOrigin, area->origin, dir);
-			VectorNormalize(dir);
+		vec3_t dir;
+		VectorSubtract(entOrigin, area->origin, dir);
+		VectorNormalize(dir);
 
-			DamageEntityAndDebuffPlayer(ent, area, dir, damage);
-		}
+		DamageEntityAndDebuffPlayer(ent, area, dir, damage);
 	}
 
 	area->lastDamageTime = level.time;
