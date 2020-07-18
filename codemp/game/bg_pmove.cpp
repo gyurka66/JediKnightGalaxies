@@ -3490,26 +3490,11 @@ static void PM_CheckDuck (void)
 
 	if (pm->ps->clientNum < MAX_CLIENTS)
 	{
+		pm->mins[0] = -15;
+		pm->mins[1] = -15;
 
-		//
-		// UQ1: More realistic hitboxes for players/bots...
-		//
-		if (pm->ps->pm_flags & PMF_DUCKED)
-		{
-			pm->maxs[2] = pm->ps->crouchheight;
-			pm->maxs[1] = 8;
-			pm->maxs[0] = 8;
-			pm->mins[1] = -8;
-			pm->mins[0] = -8;
-		}
-		else if (!(pm->ps->pm_flags & PMF_DUCKED))
-		{
-			pm->maxs[2] = pm->ps->standheight-8;
-			pm->maxs[1] = 8;
-			pm->maxs[0] = 8;
-			pm->mins[1] = -8;
-			pm->mins[0] = -8;
-		}
+		pm->maxs[0] = 15;
+		pm->maxs[1] = 15;
 	}
 
 	if ( pm->ps->legsAnim == BOTH_JUMPATTACK6 )

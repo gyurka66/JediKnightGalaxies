@@ -3501,29 +3501,6 @@ void ClientThink( int clientNum,usercmd_t *ucmd ) {
 		ent->client->pers.cmd = *ucmd;
 	}
 
-	//
-	// UQ1: More realistic hitboxes for players/bots...
-	//
-	if (ent->s.eType == ET_PLAYER)
-	{
-		if (ent->client->ps.pm_flags & PMF_DUCKED)
-		{
-			ent->r.maxs[2] = ent->client->ps.crouchheight;
-			ent->r.maxs[1] = 8;
-			ent->r.maxs[0] = 8;
-			ent->r.mins[1] = -8;
-			ent->r.mins[0] = -8;
-		}
-		else if (!(ent->client->ps.pm_flags & PMF_DUCKED))
-		{
-			ent->r.maxs[2] = ent->client->ps.standheight-8;
-			ent->r.maxs[1] = 8;
-			ent->r.maxs[0] = 8;
-			ent->r.mins[1] = -8;
-			ent->r.mins[0] = -8;
-		}
-	}
-
 	if ( !(ent->r.svFlags & SVF_BOT) && !g_synchronousClients.integer ) {
 		ClientThink_real( ent );
 	}

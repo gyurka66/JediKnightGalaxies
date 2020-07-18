@@ -7012,7 +7012,7 @@ void CG_DrawPlayerBBox ( const centity_t *cent )
         return;
     }
     
-    if ( jkg_debugBBox.integer && s->number != cg.predictedPlayerState.clientNum )
+    if ( s->number != cg.predictedPlayerState.clientNum )
     {
         return;
     }
