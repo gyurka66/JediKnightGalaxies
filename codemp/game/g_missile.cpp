@@ -629,12 +629,12 @@ void G_MissileImpact( gentity_t *ent, trace_t *trace ) {
 
 			JKG_DoDamage(
 				fireMode,
+				other,
+				ent,
 				g_entities + ent->r.ownerNum,
-				ent,
-				ent,
 				velocity,
 				ent->r.currentOrigin,
-				DAMAGE_NO_KNOCKBACK,
+				0,
 				ent->methodOfDeath,
 				&decay);
 		}
