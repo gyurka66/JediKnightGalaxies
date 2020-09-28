@@ -358,10 +358,17 @@ void Cmd_Pay_f(gentity_t* ent) {
 	vec3_t traceStart, traceEnd, forward;
 	char creditBuffer[MAX_STRING_CHARS];
 	int credits;
-	int limit;
+	int limit;  //credit limit we can pay
+	int teamTime; //how much time we've been on the team
 
 	if (trap->Argc() != 2) {
 		trap->SendServerCommand(ent - g_entities, "print \"Usage: /pay <# of credits, or \"all\">\n\"");
+		return;
+	}
+
+	if (jkg_payTime.integer < 1)
+	{
+		trap->SendServerCommand(ent - g_entities, "/pay is not allowed on this server!\n\"");
 		return;
 	}
 
@@ -373,23 +380,14 @@ void Cmd_Pay_f(gentity_t* ent) {
 	else 
 		credits = atoi(creditBuffer);
 
+	teamTime = (level.time - ent->client->pers.enterTime);
 	limit = (ent->client->ps.credits - jkg_startingCredits.integer);
-	/*limit = ent->client->ps.credits + ent->client->ps.spent - jkg_startingCredits.integer;	//how much "earned" money do we actually have?
 
-	//handle passive credits if enabled
-	if (jkg_passiveCreditsAmount.integer > 0)
+	if ( teamTime < 60000* jkg_payTime.integer) //5 mins is default
 	{
-		int delta = level.time - level.startTime;	//how long has the match been going?
-		//if we joined at least jkg_passiveCreditsWait late (typically 1 minute)
-		if (delta > jkg_passiveCreditsWait.integer)
-		{
-			int reward  = (jkg_passiveCreditsAmount.integer * (delta / jkg_passiveCreditsRate.integer));				//calculate amount we would have got
-			if (jkg_passiveCreditsWait.integer > jkg_passiveCreditsRate.integer)
-				reward -= (jkg_passiveCreditsAmount.integer * (jkg_passiveCreditsWait.integer / jkg_passiveCreditsRate.integer)) - jkg_passiveCreditsAmount.integer;		//minus the initial wait before credits are disbursed
-
-			limit -= reward;		//subtract passively earned money
-		}
-	}*/
+		trap->SendServerCommand(ent - g_entities, "print \"You cannot use /pay until you've played the game for a longer period of time.\n\"");
+		return;
+	}
 
 	if (credits <= 0) {
 		trap->SendServerCommand(ent - g_entities, "print \"You must offer an amount of 1 or more.\n\"");

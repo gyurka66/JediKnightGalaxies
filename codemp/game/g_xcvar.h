@@ -181,13 +181,14 @@ XCVAR_DEF( jkg_passiveCreditsWait,		"60000",		NULL,				CVAR_ARCHIVE|CVAR_SERVERI
 XCVAR_DEF( jkg_passiveUnderdogBonus,	"1",			NULL,				CVAR_ARCHIVE,									true )	//give additional bonus credits to the losing team and 50% off ammo costs
 XCVAR_DEF( jkg_underdogBonus,			"1",			NULL,				CVAR_ARCHIVE,									true )	//give bonus credits to late joiners who join the losing team
 XCVAR_DEF( jkg_teamKillBonus,			"10",			NULL,				CVAR_ARCHIVE,									true )	//0 >= disables, default: 10
+XCVAR_DEF( jkg_payTime,					"5",			NULL,				CVAR_ARCHIVE,									true )  //0 >= disables /pay cmd, default: 5 (mins)
 XCVAR_DEF( jkg_minAssistAwardRatio,		"25",			NULL,				CVAR_ARCHIVE,									true )	//value is % out of 100, Max allowed value is 50
 XCVAR_DEF( jkg_creditsPerTeamCapture,	"125",			NULL,				CVAR_ARCHIVE,									true )
 XCVAR_DEF( jkg_creditsPerCapture,		"300",			NULL,				CVAR_ARCHIVE,									true )
 XCVAR_DEF( jkg_creditsPerReturn,		"75",			NULL,				CVAR_ARCHIVE,									true )
-XCVAR_DEF( jkg_buyAnnounce,				"1",			NULL,				CVAR_ARCHIVE,									true )		//0 = don't announce, 1 = announce to same team, 2+ = announce to all
+XCVAR_DEF( jkg_buyAnnounce,				"1",			NULL,				CVAR_ARCHIVE,									true )	//0 = don't announce, 1 = announce to same team, 2+ = announce to all
 XCVAR_DEF( jkg_buyAnnounceThreshold,	"500",			NULL,				CVAR_ARCHIVE,									false )
-XCVAR_DEF( jkg_announceShopRefresh,		"1",			NULL,				CVAR_ARCHIVE,									false )		//have npc vendors announce when their treasure classes update?
+XCVAR_DEF( jkg_announceShopRefresh,		"1",			NULL,				CVAR_ARCHIVE,									false )	//have npc vendors announce when their treasure classes update?
 XCVAR_DEF( g_listEntity,				"0",			NULL,				CVAR_CHEAT,										false )
 XCVAR_DEF( jkg_arearestrictions,		"0",			NULL,				CVAR_ARCHIVE,									true )
 XCVAR_DEF( jkg_deathTimer,				"1",			NULL,				CVAR_ARCHIVE,									true )
