@@ -4488,10 +4488,10 @@ void PM_BeginWeaponChange( int weaponId ) {
 		pm->ps->zoomTime = pm->ps->commandTime;
 	}
 
-	// Are we currently overheated
-	if (pm->ps->overheated)
+	// Are we currently overheated or have more than 50% heat
+	if (pm->ps->overheated || (pm->ps->heat > pm->ps->maxHeat / 2.0f))
 	{
-		//PM_AddEvent(EV_HEATCRIT);
+		//PM_AddEvent(EV_HEATCRIT); //do this a different way, this is too spammy
 		return; 
 		//In the future allow, but apply damage if we try to switch while overheated? eg:
 		//G_Damage(ent, NULL, NULL, NULL, NULL, 2, DAMAGE_NO_SHIELD, MOD_LAVA);

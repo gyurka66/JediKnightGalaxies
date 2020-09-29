@@ -3999,9 +3999,18 @@ void Cmd_Reload_f( gentity_t *ent ) {
 	// Don't shoot any more bullets!
 	ent->client->ps.shotsRemaining = 0;
 
-	//reset heat for weapon when we reload
-	ent->client->ps.heat = 0.0f;
-	ent->client->ps.overheated = false;
+	//half heat for weapon when we reload
+	ent->client->ps.heat = ent->client->ps.heat / 2.0f;
+	if (ent->client->ps.heat < 1)
+		ent->client->ps.heat = 0.0f;
+
+	//check if we need to turn off overheating status after halfing heat
+	if (ent->client->ps.overheated)
+	{
+		if(ent->client->ps.heat < ent->client->ps.heatThreshold)
+			ent->client->ps.overheated = false;
+	}
+	
 }
 
 /*
