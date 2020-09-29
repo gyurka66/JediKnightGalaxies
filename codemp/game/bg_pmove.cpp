@@ -4455,7 +4455,8 @@ void PM_BeginWeaponChange( int weaponId ) {
     int weapon, variation;
 	if(!BG_GetWeaponByIndex(pm->cmd.weapon, &weapon, &variation))
 		return;
-	
+
+
 	/*if( pm->ps->clientNum >= MAX_CLIENTS )
 	{
 		if ( weaponId > 0 && pm->ps->clientNum, weaponId)
@@ -4488,13 +4489,24 @@ void PM_BeginWeaponChange( int weaponId ) {
 		pm->ps->zoomTime = pm->ps->commandTime;
 	}
 
-	// Are we currently overheated or have more than 50% heat
-	if (pm->ps->overheated || (pm->ps->heat > pm->ps->maxHeat / 2.0f))
+	//no switching while overheated
+	if (pm->ps->overheated)
 	{
-		//PM_AddEvent(EV_HEATCRIT); //do this a different way, this is too spammy
-		return; 
-		//In the future allow, but apply damage if we try to switch while overheated? eg:
-		//G_Damage(ent, NULL, NULL, NULL, NULL, 2, DAMAGE_NO_SHIELD, MOD_LAVA);
+		return;
+	}
+
+	// Is our weapon hot? (50%+ heat)
+	if (pm->ps->heat > pm->ps->maxHeat / 2.0f)
+	{
+		PM_AddEvent(EV_OVERHEATED);
+
+		//add weaponTime wait if weapon is hot
+		pm->ps->weaponTime += (10 * (pm->ps->heat / pm->ps->maxHeat*100));
+
+		if (pm->ps->heat > pm->ps->heatThreshold)
+			pm->ps->weaponTime += 400; //extra penalty for switching while beyond threshold
+
+		//In the future allow, but apply damage if we switch while overheated? possibly as a skill?
 	}
 
     // Change of weapon
@@ -4724,6 +4736,7 @@ static void PM_Weapon(void)
 	static qboolean jkg_didGrenadeCook[MAX_GENTITIES];
 	const weaponData_t* weaponData;
 
+
 #ifdef _GAME
 	if (pm->ps->clientNum >= MAX_CLIENTS &&
 		pm->ps->weapon == WP_NONE &&
@@ -4869,7 +4882,9 @@ static void PM_Weapon(void)
 			if (jkg_didGrenadeCook[pm->ps->clientNum]) //needs a better way to check if we're currently cooking a nade on server, this doesn't really work. --futuza
 				;
 			else
+			{
 				PM_BeginWeaponChange(pm->cmd.weapon);
+			}
 		}
 	}
 
