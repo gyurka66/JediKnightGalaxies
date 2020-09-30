@@ -326,9 +326,10 @@ The .wpn file contains one field for each firing mode, starting with 0.
   - range (float): How long the projectile shot by the weapon goes (or the hitscan line traces for), in map units.
   - splashrange (float): For non-complex damage areas, this details how far to spread the damage.
   - recoil (float): How much to tilt the camera when a player shoots this firing mode.
-  - heatGenerated (float, default: 0): How much heat is generated when this weapon fires. When your "heat" value exceeds maxHeat, you cannot fire this weapon anymore.
-  - maxHeat (integer, default: 100): If your heat exceeds this value, you cannot fire any more.
+  - heatGenerated (float, default 0): How much heat is generated when this weapon fires. When your "heat" value exceeds maxHeat, you cannot fire this weapon anymore.
+  - maxHeat (integer, default 100): If your heat exceeds this value, you cannot fire any more.
   - heatThreshold (interger, default: 75% of maxHeat): Once your maxHeat is hit, you cannot fire until the weapon has cooled to a value less than this threshold.
+  - reloadClearHeat (integer, default 50, range 0-100): Represents how much heat (percentage) should be cleared if you reload the weapon.  eg: 75 = 75% of the heat is cleared.
   - accuracy (object): Contains the following fields:
    - accuracyRating (float, default 32): How far apart each shot can be (maximum) at roughly 100 map units distance. This is the base value.
    - crouchModifier (float, default 0.8): How much to multiply the overall accuracy rating while crouching.

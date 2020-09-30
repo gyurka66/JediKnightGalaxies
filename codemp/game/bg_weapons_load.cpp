@@ -324,6 +324,13 @@ static void BG_ParseWeaponFireMode ( weaponFireModeStats_t *fireModeStats, cJSON
     node = cJSON_GetObjectItem(fireModeNode, "heatThreshold");
     fireModeStats->heatThreshold = (unsigned int)cJSON_ToNumberOpt(node, (fireModeStats->maxHeat * 0.75)); //defaults to 75% of maxHeat
 
+    node = cJSON_GetObjectItem(fireModeNode, "reloadClearHeat");
+    fireModeStats->reloadClearHeat = (unsigned int)cJSON_ToNumberOpt(node, 50); //default is 50% (0 = no heat cleared, 100% of heat cleared)
+    if (fireModeStats->reloadClearHeat > 100)
+        fireModeStats->reloadClearHeat = 100;
+    if (fireModeStats->reloadClearHeat < 0)
+        fireModeStats->reloadClearHeat = 0;
+
 	node = cJSON_GetObjectItem(fireModeNode, "clipSize");
 	fireModeStats->clipSize = (unsigned int)cJSON_ToIntegerOpt(node, 0);
 
