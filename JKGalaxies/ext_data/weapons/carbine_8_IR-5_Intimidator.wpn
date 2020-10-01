@@ -65,8 +65,9 @@
 			"maxAccuracyAdd": 80,
 			"sightsModifier": 0.4
         },
-        "heatGenerated": 3,
-        "maxHeat": 50
+        "heatGenerated": 2.8,
+		"reloadClearHeat": 60,
+        "maxHeat": 75
     },
 
 	
