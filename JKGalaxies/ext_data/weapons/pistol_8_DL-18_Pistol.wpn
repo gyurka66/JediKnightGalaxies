@@ -13,8 +13,8 @@
         "selectsound":      "sound/weapons/select_pistol.wav",
 	"barrelCount":	    1,
         
-        "gunposition":      "8.0 -2.5 -5.0",
-        "ironsightsposition": "8.0 0.0 -4.4",
+        "gunposition":      "12.0 -4.0 -7.0",
+        "ironsightsposition": "8.0 0.0 -4.45",
         "ironsightsfov": "70",
 		"barrelCount": "1",
     

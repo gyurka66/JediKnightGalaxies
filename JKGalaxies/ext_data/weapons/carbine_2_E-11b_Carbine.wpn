@@ -17,7 +17,7 @@
             "firemode":     "models/weapons/E-11b_Carbine/firemode"
         },
         
-        "gunposition":      "11.0 -2.0 -6.5",
+        "gunposition":      "14.0 -4.0 -8.0",
         "ironsightsposition": "13.0 0.0 -4.9",
         "ironsightsfov": "70",
 		"barrelCount": "3",
@@ -135,8 +135,8 @@
 	"firemode2": {
         "damage":       18,
         "ammocost":     1,
-        "firedelay":    90,
-	"burstshotdelay":	500,
+        "firedelay":    500,
+	"burstshotdelay":	90,
         "firingtype":   "burst",
 		"shotsperburst": 4,
         "range":        3500.0,

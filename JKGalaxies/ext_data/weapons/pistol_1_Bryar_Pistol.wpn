@@ -17,7 +17,7 @@
             "firemode":     "models/weapons/bryar_pistol/firemode"
         },
         
-        "gunposition":      "13.0 -3.0 -6.0",
+        "gunposition":      "14.0 -4.0 -7.0",
         "ironsightsposition": "9.0 0.0 -3.5",
         "ironsightsfov": "75",
 		"barrelCount": "4",
@@ -67,7 +67,7 @@
     },
     
     "firemode0": {
-        "damage":       25,
+        "damage":       26,
         "ammocost":     1,
         "firedelay":    500,
         "firingtype":   "semi",
@@ -83,7 +83,7 @@
     },
     
     "firemode1": {
-        "damage":       18,//14,
+        "damage":       18,//32,
         "maxchargetime":1200,
         "chargedamage": 1.0,
         "chargedelay":  400,
@@ -92,7 +92,7 @@
         "firingtype":   "semi",
         "recoil":       1.4,
         "range":       8000,
-        "splashrange":  3.0,
+        "splashrange":  48.0,
         "spread":       0.0,
         "projectilespeed": 6000.0,
         "projectileclass": "blaster_proj",

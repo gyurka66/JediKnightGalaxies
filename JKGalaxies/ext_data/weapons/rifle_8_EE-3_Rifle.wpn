@@ -16,7 +16,7 @@
             "ammo":         [ "models/weapons/EE-3_Rifle/numbers3", "models/weapons/EE-3_Rifle/numbers2", "models/weapons/EE-3_Rifle/numbers1" ]
         },
         
-        "gunposition":      "7.0 -3.0 -5.0",
+        "gunposition":      "10.0 -4.0 -7.0",
         "ironsightsposition": "7.0 0 -4.5",
         "ironsightsfov": "20",
     
@@ -69,8 +69,8 @@
     "firemode0": {
         "damage":       24,
         "ammocost":     1,
-	    "burstshotdelay": 120,
-        "firedelay":    800,
+	    "burstshotdelay": 80,
+        "firedelay":    500,
         "firingtype":   "burst",
         "range":        4600.0,
         "recoil":       0.7,
@@ -83,7 +83,9 @@
         "splashmeansofdeath": "MOD_BLASTER",
 		"ammobase": "AMMO_POWERPACK_L",
 		"ammodefault": "AMMO_POWERPACK_M",
-        "clipSize":              45
+        "clipSize":              45,
+		"heatGenerated": 4,
+		"maxHeat": 50
     },
 	
     "firemode1": {
@@ -100,7 +102,9 @@
         "splashmeansofdeath": "MOD_BLASTER",
 		"ammobase": "AMMO_POWERPACK_L",
 		"ammodefault": "AMMO_POWERPACK_M",
-        "clipSize":              45
+        "clipSize":              45,
+		"heatGenerated": 4,
+		"maxHeat": 50
     },
     
 	"playeranims": {

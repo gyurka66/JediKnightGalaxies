@@ -17,7 +17,7 @@
             "firemode":     "models/weapons/bryar_rifle/firemode"
         },
         
-        "gunposition":      "7.0 -4.0 -4.0",
+        "gunposition":      "11.0 -5.0 -7.0",
         "ironsightsposition": "8.0 -1.4 -3.4",
         "ironsightsfov": "10",
 		"barrelCount": "4",
@@ -108,7 +108,7 @@
         "firingtype":   "semi",
         "recoil":       1.5,
         "range":       8000,
-        "splashrange":  3.0,
+        "splashrange":  50.0,
         "spread":       0.0,
         "projectilespeed": 6000.0,
         "projectileclass": "blaster_proj",

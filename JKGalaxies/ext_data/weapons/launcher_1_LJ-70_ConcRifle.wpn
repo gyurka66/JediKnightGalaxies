@@ -17,7 +17,7 @@
             "firemode":     "models/weapons/LJ-70_ConcRifle/firemode"
         },
         
-        "gunposition":      "6.0 -3.5 -6.0",
+        "gunposition":      "6.0 -4.0 -6.0",
         "ironsightsposition": "6.0 -2.0 -5.0",
         "ironsightsfov": "70",
 		"barrelCount": "3",
@@ -70,15 +70,17 @@
     },
     
     "firemode0": {
-		"damage": {
-			"damageradius": { "start": 420 },
-			"damage": 45,
-			"buffs": [
-					{
-						"buff": "standard-stun",
-						"duration": 2000
-					}
-				]
+		"damage": 
+			{
+			"damageradius": 
+				{ 
+				"start": 420,
+                "falloff": "linear",
+				"function": "constant"
+				},
+				"duration": "1",
+				"delay": "1000",
+				"damage": 45
 		},
 //        "damage": 50,//100,//{
 //                          "damageradius": { "start": 128 },

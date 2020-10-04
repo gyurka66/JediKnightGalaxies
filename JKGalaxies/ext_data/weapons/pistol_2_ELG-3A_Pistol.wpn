@@ -18,8 +18,8 @@
             "firemode":     "models/weapons/elg-3a_pistol/indicator_firemode"
         },
         
-        "gunposition":      "10.0 -3.0 -4.0",
-        "ironsightsposition": "10.0 0.0 -3.0",
+        "gunposition":      "14.0 -4.0 -6.0",
+        "ironsightsposition": "10.0 0.0 -2.9",
         "ironsightsfov": "75",
 		"barrelCount": "1",
     

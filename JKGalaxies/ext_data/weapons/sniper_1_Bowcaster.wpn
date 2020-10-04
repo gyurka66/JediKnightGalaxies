@@ -75,7 +75,7 @@
         "ballistic":    true,
         "ammocost":     1,
         "burstshotdelay": 100,
-        "firedelay":    2400,
+        "firedelay":    1600,
         "firingtype":   "burst",
         "range":        9000.0,
         "recoil":       1.8,

@@ -13,7 +13,7 @@
         "selectsound":      "sound/weapons/select_carbine.wav",
         
 //        "gunposition":      "8.0 -2.2 -7.0",
-        "gunposition":      "11.0 -2.2 -6.6",
+        "gunposition":      "14.0 -4.0 -8.0",
         "ironsightsposition": "13.0 0.0 -4.4",
         "ironsightsfov": "70",
 		"barrelCount": "4",
@@ -82,8 +82,7 @@
 			"maxAccuracyAdd": 80,
 			"sightsModifier": 0.4
         },
-	"heatGenerated": 4.1,
-    "maxHeat":	150
+	"heatGenerated": 3
     },
     
     "firemode1": {

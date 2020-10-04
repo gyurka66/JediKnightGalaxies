@@ -17,7 +17,7 @@
             "firemode":     "models/weapons/ARC_CasterMk1/firemode"
         },
         
-        "gunposition":      "10.0 -2.0 -7.0",
+         "gunposition":      "14.0 -4.0 -8.0",
         "ironsightsposition": "13.0 0.0 -4.6",
         "ironsightsfov": "70",
 		"barrelCount": "4",

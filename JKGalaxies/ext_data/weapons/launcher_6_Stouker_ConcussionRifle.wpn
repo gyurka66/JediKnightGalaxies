@@ -16,7 +16,7 @@
             "ammo":         [ "models/weapons/stouker_concussionrifle/indicator", "models/weapons/stouker_concussionrifle/indicator0" ]
         },
         
-        "gunposition":      "4.0 -4.0 -6.4",
+        "gunposition":      "5.0 -4.0 -6.4",
         "ironsightsposition": "3.0 0.0 -5.0",
         "ironsightsfov": "70",
 		"barrelCount": "2",

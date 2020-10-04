@@ -29,12 +29,10 @@
             "chargingsound": "sound/weapons/grenade_cook.wav",
             "projectilemodel": "models/weapons/Grenade_Stun/projectile.md3",
             "miss": {
-                "impactfx": "weapons/watergun_impact_big",
-                "shockwavefx": "weapons/watergun_impact_small"
+                "impactfx": "explosives/bacta_class-e"
             },
             "hit": {
-                "impactfx": "weapons/watergun_impact_big",
-                "shockwavefx": "weapons/watergun_impact_small"
+                "impactfx": "explosives/bacta_class-e"
             },
             "bouncesound":  [ "sound/weapons/grenade_bounce1.wav", "sound/weapons/grenade_bounce2.wav" ],
 	    "displayName":  "Throw"
