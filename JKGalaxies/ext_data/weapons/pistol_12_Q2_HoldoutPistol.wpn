@@ -84,7 +84,7 @@
         	"msToDrainAccuracy": 35,
         	"maxAccuracyAdd": 35
         },
-        "heatGenerated": 5,
+        "heatGenerated": 3,
 		"reloadClearHeat": 0,
         "maxHeat": 30
     },
