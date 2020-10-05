@@ -89,7 +89,7 @@
     "firemode0": {
         "damage":       30,
         "ammocost":     1,
-        "firedelay":    200,
+        "firedelay":    143,
         "range":        4500.0,
         "recoil":       1.2,
         "projectilespeed": 5000.0,
@@ -99,7 +99,7 @@
 		"firingtype":   "auto",
 	"ammobase": "AMMO_POWERPACK_L",
 	"ammodefault": "AMMO_POWERPACK_S",
-        "clipSize":              30,
+        "clipSize":              60,
         "accuracy": {
 			"accuracyRating": 18,
 			"accuracyRatingPerShot": 3,
@@ -142,7 +142,7 @@
         "meansofdeath": "MOD_STUNNED",
 	"ammobase": "AMMO_POWERPACK_L",
 	"ammodefault": "AMMO_POWERPACK_S",
-        "clipSize":              30,
+        "clipSize":              60,
 	"maxHeat": 50
     },
 	

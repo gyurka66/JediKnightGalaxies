@@ -93,9 +93,9 @@
         "runModifier": 1.3,
         "sightsModifier": 0.2,
         "walkModifier": 1.2,
-        "inAirModifier": 1.5,
-	"heatGenerated": 8
-        }
+        "inAirModifier": 1.5
+        },
+	"heatGenerated": 5
     },
     
     "firemode1": {

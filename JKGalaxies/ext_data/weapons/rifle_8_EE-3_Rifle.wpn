@@ -70,7 +70,7 @@
         "damage":       24,
         "ammocost":     1,
 	    "burstshotdelay": 80,
-        "firedelay":    500,
+        "firedelay":    400,
         "firingtype":   "burst",
         "range":        4600.0,
         "recoil":       0.7,
@@ -84,7 +84,7 @@
 		"ammobase": "AMMO_POWERPACK_L",
 		"ammodefault": "AMMO_POWERPACK_M",
         "clipSize":              45,
-		"heatGenerated": 4,
+		"heatGenerated": 1.8,
 		"maxHeat": 50
     },
 	
@@ -103,7 +103,7 @@
 		"ammobase": "AMMO_POWERPACK_L",
 		"ammodefault": "AMMO_POWERPACK_M",
         "clipSize":              45,
-		"heatGenerated": 4,
+		"heatGenerated": 1.8,
 		"maxHeat": 50
     },
     
