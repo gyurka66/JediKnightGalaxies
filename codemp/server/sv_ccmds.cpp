@@ -1170,7 +1170,9 @@ static void SV_Status_f( void )
 	Q_StripColor( hostname );
 
 	Com_Printf( "hostname: %s^7\n", hostname );
-	Com_Printf( "version : %s %i\n", VERSION_STRING_DOTTED, PROTOCOL_VERSION );
+	Com_Printf( "jka version: %s , %i\n", VERSION_STRING_DOTTED, PROTOCOL_VERSION );
+	Com_Printf( "jkg version: %s\n", JKG_VERSION JKG_VERSION_SUFFIX);
+	Com_Printf( "git version: %s\n", JK_VERSION);
 	Com_Printf( "game    : %s\n", FS_GetCurrentGameDir() );
 	Com_Printf( "udp/ip  : %s:%i os(%s) type(%s)\n", Cvar_VariableString( "net_ip" ), Cvar_VariableIntegerValue( "net_port" ), STATUS_OS, ded_table[com_dedicated->integer] );
 	Com_Printf( "map     : %s gametype(%i)\n", sv_mapname->string, sv_gametype->integer );
