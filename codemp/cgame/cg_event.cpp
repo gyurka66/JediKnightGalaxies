@@ -1583,6 +1583,9 @@ void CG_EntityEvent( centity_t *cent, vec3_t position ) {
 
 			//add fx of lots of steam coming off gun here
 
+			//play shield effect
+			//ByteToDir(es->eventParm, dir);
+			//CG_PlayerShieldHit(es->otherEntityNum, dir, 100);
 		}
 		break;
 

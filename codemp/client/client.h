@@ -267,6 +267,7 @@ typedef struct serverInfo_s {
 	char	  	hostName[MAX_NAME_LENGTH];
 	char	  	mapName[MAX_NAME_LENGTH];
 	char	  	game[MAX_NAME_LENGTH];
+	char		gameversion[MAX_NAME_LENGTH];
 	int			netType;
 	int			gameType;
 	int		  	clients;
