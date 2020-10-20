@@ -98,7 +98,7 @@ These are very much subject to change, especially phases later than Versus.
 
 
 ## Version Information ##
-JKG uses the following version schema: Phase.Major.Minor with an optional "patch" letter following the minor version for hotfixes (these are unplanned versions).  Phases represent collosal changes to the game (these are often called 'expansions' in other games) that include major new features and gameplay changes and even engine changes!  Phases should be considered seperate games.  Major versions represent completions of milestones that include several key new features and bug fixes.  Minor versions represent small incremental changes within a milestone and usually represent a single new feature or small set of features and/or bug fixes.  Other software produced by the developers (such as the launcher) uses its own versioning scheme and is not covered in this readme.
+JKG uses the following version schema: Phase.Major.Minor with an optional suffix (or "patch")letter following the minor version for hotfixes (these are unplanned versions that address server side only fixes and do not require client updates to play).  Phases represent collosal changes to the game (these are often called 'expansions' in other games) that include major new features and gameplay changes and even engine changes!  Phases should be considered seperate games.  Major versions represent completions of milestones that include several key new features and bug fixes.  Minor versions represent small incremental changes within a milestone and usually represent a single new feature or small set of features and/or bug fixes.  Other software produced by the developers (such as the launcher) uses its own versioning scheme and is not covered in this readme.
 
 
 
