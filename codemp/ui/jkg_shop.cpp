@@ -25,6 +25,8 @@ static size_t nShopScroll = 0;			// How far we've scrolled in the menu
 static bool bPriceCheckComplete = false;// Whether or not we've completed the ammo price check
 static int nPriceCheckCost = -1;
 static bool bExamineMenuOpen = false;	// Whether we are examining things
+qboolean isBuyBack = false;				// If the item in our inventory is elligible for buyback
+static int buyBackRefreshTime = 0;		// How often we should bother checking the buyback list
 
 // This function updates the status of price checking. Only called when bPriceCheckComplete is false.
 void JKG_Shop_UpdatePriceCheck()
@@ -415,8 +417,24 @@ void JKG_Shop_InventoryItemCost(itemDef_t* item, int nOwnerDrawID) {
 		sprintf(item->text, "%i", 1);
 
 	else
-		sprintf(item->text, "%i", pItem->id->baseCost / 2 * pItem->quantity);
+	{
+		// Perform a price check on this item, but don't spam
+		if(buyBackRefreshTime > 50)
+			cgImports->SendClientCommand(va("checkbuyback %i", vInventoryItems[nInventoryScroll + nOwnerDrawID].first));
 
+		if (isBuyBack) //item is currently elligible for buyback, give full cost back
+		{
+			sprintf(item->text, "%i", pItem->id->baseCost * pItem->quantity);
+		}
+
+		//if not elligble for buyback, then we only get 1/2 the cost back
+		else
+		{
+			sprintf(item->text, "%i", pItem->id->baseCost / 2 * pItem->quantity);
+		}
+		
+		buyBackRefreshTime++;
+	}
 	Item_Text_Paint(item);
 }
 
@@ -709,6 +727,12 @@ void JKG_ShopNotify(jkgShopNotify_e msg)
 		JKG_ConstructShopLists();
 		trap->Key_SetCatcher(trap->Key_GetCatcher() | KEYCATCH_UI);
 	}
+}
+
+void JKG_Shop_BuybackCheckComplete(qboolean found)
+{
+	buyBackRefreshTime = 0;
+	isBuyBack = found;
 }
 
 // Performed when a price check is returned by the server

@@ -850,6 +850,62 @@ static void Cmd_MyAmmo_f(gentity_t* ent) {
 }
 
 
+/*
+==================
+Cmd_CheckBuyBack_f
+==================
+*/
+static void Cmd_CheckBuyBack_f(gentity_t* ent)
+{
+	int invID = -1;
+	char buffer[1024]{ 0 };
+	bool found = false;
+	itemInstance_t* item;
+
+	if (jkg_buybackTime.integer < 1)
+	{
+		trap->SendServerCommand(ent - g_entities, "print \"Buyback is not enabled on this server.\n\"");
+		return;
+	}
+
+	if (trap->Argc() < 2)
+	{
+		trap->SendServerCommand(ent - g_entities, "print \"usage: /checkbuyback <inventory ID>\n\"");
+		return;
+	}
+
+	trap->Argv(1, buffer, 1024);
+
+	if (StringIsInteger(buffer))
+	{
+		invID = atoi(buffer);
+	}
+
+	if (invID >= ent->inventory->size() || invID < 0) 
+	{
+		trap->SendServerCommand(ent - g_entities, "print \"Invalid item ID.\n\""); //--futuza: investigate, jkg_shop.cpp is hitting this 4x, after selling an item.
+		return;
+	}
+
+	if (ent->inventory == nullptr)
+	{
+		trap->SendServerCommand(ent - g_entities, "print \"Your inventory is NULL (?)\n\"");
+		return;
+	}
+
+	item = &(*ent->inventory)[invID];
+
+	for (auto it = ent->bb_inventory->begin(); it != ent->bb_inventory->end(); ++it)
+	{
+		if (it->first == item->id)
+		{
+			found = true;
+			break;
+		}
+	}
+
+	trap->SendServerCommand(ent - g_entities, va("bbi %i", found));
+}
 
 /*
 ==================
@@ -1070,7 +1126,7 @@ void Cmd_BuyItem_f(gentity_t *ent)
 	{
 		//char* snd;  //unused
 
-		//select random unhappy vendor sound to play
+		//select random purchase vendor sound to play
 		if (CustomVendorSounds(trader, "purchase00"))
 		{// This NPC has it's own vendor specific sound(s)...
 			char	filename[256];
@@ -1085,6 +1141,12 @@ void Cmd_BuyItem_f(gentity_t *ent)
 		//if not custom vendor, use the generic one
 		else
 			G_PreDefSound(ent->r.currentOrigin, PDSOUND_VENDORPURCHASE);
+	}
+
+	// add buyback inventory item along with timestamp
+	if (jkg_buybackTime.integer > 0)
+	{
+		ent->bb_inventory->emplace_back(pItem->id, level.time);
 	}
 
 	// Tell other clients, if the item is not too cheap 
@@ -1131,6 +1193,11 @@ void Cmd_CloseVendor_f (gentity_t *ent)
 	ent->client->pmnomove = false;
 	ent->client->currentTrader->genericValue1 = ENTITYNUM_NONE;
 	ent->client->currentTrader = NULL;
+
+	//--Futuza: in the future maybe do something more complicated with buybacks, 
+	//			eg: only allow client to go so far away from the vendor before clearing out buyback
+	//			Right now, in g_active.cpp, we check if they fire a weapon and if so clear it out
+
 }
 
 /*
@@ -2337,6 +2404,7 @@ void Cmd_SellItem_f(gentity_t *ent)
 	if (!item.id) {
 		return;
 	}
+		
 	// DO NOT ALLOW SELLING OF STARTER WEAPONS! (unless you already have another gun in your inventory)
 	if (item.id->itemType == ITEM_WEAPON) {
 		if (!Q_stricmp(item.id->internalName, level.startingWeapon)) {
@@ -2362,8 +2430,53 @@ void Cmd_SellItem_f(gentity_t *ent)
 		JKG_ArmorChanged(ent);
 	}
 
+	// loopthrough bb_inventory and remove from recent purchases
+	bool buyback = false;
+	if (jkg_buybackTime.integer > 0)
+	{
+		for (auto it = ent->bb_inventory->begin(); it != ent->bb_inventory->end();)
+		{
+			if (it->first == item.id)
+			{
+				it = ent->bb_inventory->erase(it);
+				buyback = true;
+				break;
+			}
 
-	ent->client->ps.credits += (creditAmount * item.quantity) / 2;
+			else
+				++it;
+		}
+	}
+
+	// if it was on our buyback list, give us a full refund
+	if (buyback)
+	{
+		ent->client->ps.credits += creditAmount * item.quantity;
+
+		// If it's a weapon, we need to take back the ammo we gave away when we sold it.
+		if (item.id->itemType == ITEM_WEAPON) 
+		{
+			weaponData_t* wp = GetWeaponData(item.id->weaponData.weapon, item.id->weaponData.variation);
+			if (!wp->firemodes[0].useQuantity) 
+			{
+				for (int i = 0; i < wp->numFiringModes; i++) 
+				{
+					ammo_t* ammoDefault = wp->firemodes[i].ammoDefault;
+					if (ammoDefault) {
+						BG_GiveAmmo(ent, ammoDefault, qfalse, -(ammoDefault->ammoMax / 2));
+					}
+					ent->client->clipammo[item.id->weaponData.varID][i] = wp->firemodes[i].clipSize;
+					ent->client->ammoTypes[item.id->weaponData.varID][i] = wp->firemodes[i].ammoDefault->ammoIndex;
+				}
+			}
+		}
+	}
+
+	else
+	{
+		ent->client->ps.credits += (creditAmount * item.quantity) / 2;
+	}
+
 	BG_RemoveItemStack(ent, nInvID);
 	trap->SendServerCommand(ent->s.number, va("inventory_update %i", ent->client->ps.credits));
 
@@ -4944,6 +5057,7 @@ static const command_t commands[] = {
 	{ "callvote",				Cmd_CallVote_f,				CMD_NOINTERMISSION },
 	{ "callteamvote",			Cmd_CallTeamVote_f,			CMD_NOINTERMISSION | CMD_NOSPECTATOR },
 	{ "checkbotreach",			AIMod_CheckMapPaths,		CMD_NEEDCHEATS },
+	{ "checkbuyback",			Cmd_CheckBuyBack_f,			CMD_NOINTERMISSION | CMD_NOSPECTATOR},
 	{ "checkobjectivesreach",	AIMod_CheckObjectivePaths,	CMD_NEEDCHEATS },
 	{ "closeentities",			Cmd_CloseEntities_f,		0 },
 	{ "closeVendor",			Cmd_CloseVendor_f,			0 },

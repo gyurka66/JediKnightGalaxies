@@ -453,6 +453,7 @@ struct gentity_s {
 	gentity_t   *damagePlum;
 	int			damagePlumTime;
 	int			lastHealTime;
+	int			lastBBTime;		// Determines when the last buyback time for inventory items is.
 	buffInfo_t	buffData[PLAYERBUFF_BITS];
 
 	int			grenadeCookTime;	// For cookable grenades.
@@ -507,6 +508,7 @@ struct gentity_s {
 	//
 	/////////////////////////////////////////
 	std::vector<itemInstance_t>* inventory;
+	std::vector<std::pair<itemData_t*, int>>* bb_inventory; //keeps track of recently purchased items
 	std::vector<entityHitRecord_t>* assists;
 };
 

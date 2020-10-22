@@ -3100,6 +3100,8 @@ void ClientSpawn(gentity_t *ent, qboolean respawn) {
 	}
 	else
 	{
+		ent->lastBBTime = level.time; //start the buyback timer
+
 		if (level.startingWeapon[0])
 		{
 			const weaponData_t *weapon = BG_GetWeaponByClassName (level.startingWeapon);
@@ -3530,6 +3532,10 @@ void ClientDisconnect( int clientNum ) {
 	}
 
 	if (ent->inventory != nullptr) {
+		ent->inventory->clear();
+	}
+	if (ent->bb_inventory != nullptr)
+	{
 		ent->inventory->clear();
 	}
 	if (ent->assists != nullptr) {

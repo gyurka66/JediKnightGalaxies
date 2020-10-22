@@ -62,10 +62,21 @@ void BG_GiveAmmo(gentity_t* ent, ammo_t* ammo, qboolean max, int amount)
 	if (max) {
 		ent->client->ammoTable[ammo->ammoIndex] = ammo->ammoMax;
 	}
-	else {
-		ent->client->ammoTable[ammo->ammoIndex] += amount;
-		if (ent->client->ammoTable[ammo->ammoIndex] > ammo->ammoMax) {
-			ent->client->ammoTable[ammo->ammoIndex] = ammo->ammoMax;
+	else
+	{
+		if (ent->client->ammoTable[ammo->ammoIndex] + amount < 0)
+		{
+			ent->client->ammoTable[ammo->ammoIndex] = 0;
+		}
+
+		else
+		{
+			ent->client->ammoTable[ammo->ammoIndex] += amount;
+
+			if (ent->client->ammoTable[ammo->ammoIndex] > ammo->ammoMax)
+			{
+				ent->client->ammoTable[ammo->ammoIndex] = ammo->ammoMax;
+			}
 		}
 	}
 }
