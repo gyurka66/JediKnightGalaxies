@@ -1020,7 +1020,7 @@ qboolean BG_LoadWeapons ( weaponData_t *weaponDataTable, unsigned int *numLoaded
 {
     int i;
     char weaponFiles[8192];
-    int numFiles = trap->FS_GetFileList ("ext_data/weapons", ".wpn", weaponFiles, sizeof (weaponFiles));
+    int numFiles = Q_FSGetFileListSorted ("ext_data/weapons", ".wpn", weaponFiles, sizeof (weaponFiles));
     const char *weaponFile = weaponFiles;
     int successful = 0;
     int failed = 0;

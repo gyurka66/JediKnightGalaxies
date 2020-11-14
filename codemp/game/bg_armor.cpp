@@ -275,7 +275,7 @@ void JKG_LoadArmor() {
 	int failed = 0;
 	int numFiles;
 
-	numFiles = trap->FS_GetFileList(armorDir, ".arm", armorFiles, sizeof(armorFiles));
+	numFiles = Q_FSGetFileListSorted(armorDir, ".arm", armorFiles, sizeof(armorFiles));
 	armor = armorFiles;
 
 	Com_Printf("------- Armor -------\n");

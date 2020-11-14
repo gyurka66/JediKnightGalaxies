@@ -1304,7 +1304,7 @@ static bool BG_LoadItems(void)
 {
 	int i, j;
 	char itemFiles[8192];
-	int numFiles = trap->FS_GetFileList("ext_data/items/", ".itm", itemFiles, sizeof(itemFiles));
+	int numFiles = Q_FSGetFileListSorted("ext_data/items/", ".itm", itemFiles, sizeof(itemFiles));
 	const char *itemFile = itemFiles;
 	int successful = 0;
 	int failed = 0;

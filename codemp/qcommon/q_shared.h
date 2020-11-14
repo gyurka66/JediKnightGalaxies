@@ -2440,6 +2440,19 @@ void getGalacticTimeStamp(char* outStr);	//Gets current time    to use : char my
 qboolean StringContainsWord(const char *haystack, const char *needle);
 qboolean Q_stratt( char *dest, unsigned int iSize, char *source );
 
+typedef struct stringList_s stringList_t;
+struct stringList_s
+{
+	char *string;
+
+	stringList_t *next;
+};
+
+void stringList_addSorted( stringList_t **el, const char *stringIn );
+void stringList_free( stringList_t **el );
+int stringList_writeToBuffer( stringList_t *el, char *buffer, int bufferSize );
+void sortStrings( int *numStrings, char *stringList, int bufsize );
+
 // Performance analysis
 typedef struct
 {
