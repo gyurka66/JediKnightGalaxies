@@ -895,7 +895,7 @@ void BG_InitializeAmmo ( void )
 	int failed = 0;
 	int numFiles;
 
-	numFiles = trap->FS_GetFileList(ammoDir, ".ammo", ammoFiles, sizeof(ammoFiles));
+	numFiles = Q_FSGetFileListSorted(ammoDir, ".ammo", ammoFiles, sizeof(ammoFiles));
 	ammo = ammoFiles;
 
 	Com_Printf("------- Ammo -------\n");

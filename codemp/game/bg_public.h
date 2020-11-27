@@ -1928,6 +1928,8 @@ void Q_FSBinaryDump( const char *filename, const void *buffer, size_t len );
 void Q_FSWriteJSON( void *root, fileHandle_t f );
 void Q_FSWriteString( fileHandle_t f, const char *msg );
 
+int Q_FSGetFileListSorted( const char *path, const char *extension, char *listbuf, int bufsize );
+
 bool JKG_ParseHiltFiles( void );
 void JKG_CleanSaberHilts( void );
 
