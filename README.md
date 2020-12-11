@@ -2,13 +2,14 @@
 [Webpage](https://www.jkgalaxies.net)  
 [Discord](https://discord.gg/YuG8Zks)   
 
-[FAQ](http://jkhub.org/topic/6613-jkg-faq/)  
+[FAQ](https://www.jkgalaxies.net/faq.html)  
 [Forum]( https://jkhub.org/forum/117-jedi-knight-galaxies/) (hosted by JKHub)  
-[Official Announcements](https://jkhub.org/forum/119-jkgalaxies-news/)   
-[ModDB Page](http://www.moddb.com/mods/jkgalaxies) (not updated frequently)  
-[Lbry.tv](https://lbry.tv/@JediKnightGalaxies:c?view=about)  
+[Forum Announcements](https://jkhub.org/forum/119-jkgalaxies-news/)   
 [YouTube](https://www.youtube.com/channel/UCnnAUSngUk8l3fycYMVXkKQ/featured)  
 [Twitch](https://www.twitch.tv/jkgalaxies)  
+[ModDB Page](http://www.moddb.com/mods/jkgalaxies) (not updated frequently)  
+[Lbry.tv](https://lbry.tv/@JediKnightGalaxies:c?view=about) (not updated frequently)  
+
 
 
 
@@ -19,7 +20,7 @@ The most update links are available on the download page on the website, under t
 [Binaries](https://github.com/JKGDevs/JediKnightGalaxies/releases/) , [Assets](https://uvu.box.com/shared/static/ctdly3jwnhjcji560sx1czfdgnahbtzi.zip) , 
 [Map Bundle #1](http://jkhub.org/files/file/2652-jedi-knight-galaxies-map-bundle-1/) , [Map Bundle #2](https://uvu.box.com/shared/static/kb0wvyqtz0sarzs0kn1c8h03wrpjgb7c.zip)
 
-Please use discretion when making issue requests on GitHub. The forum is a better place for larger discussions on changes that aren't actually bugs.
+Please use discretion when making issue requests on GitHub. The [forum](https://jkhub.org/forum/117-jedi-knight-galaxies/) is a better place for larger discussions on changes that aren't actually bugs.
 
 
 ### What is Jedi Knight Galaxies? ###
@@ -30,6 +31,9 @@ The project will be released in phases, each building on to the previous one wit
 The game is a much loved hobby project supported by its community and developers who work on it in their freetime, contribution is encouraged and newbies are welcome.  Originally founded by a group of Jedi Academy modders led by Jake (now retired), the project has since been in and out of development since 2008. The project is currently headed by our hardworking, lead programmer: eezstreet.  The current development team comes from a variety of backgrounds, countries, and age, united by our desire to make a great game. 
 
 Welcome to Jedi Knight Galaxies, where we break the limits!
+
+### Trailer ###
+[![JKG v1.3.22 Trailer](http://img.youtube.com/vi/X63qy7lONyo/0.jpg)](http://www.youtube.com/watch?v=X63qy7lONyo "JKG v1.3.22 Trailer")
 
 
 ## Build Guide ##
