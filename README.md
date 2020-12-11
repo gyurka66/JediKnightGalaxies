@@ -11,19 +11,14 @@
 [Lbry.tv](https://lbry.tv/@JediKnightGalaxies:c?view=about) (not updated frequently)  
 
 
-
-
-
-#### Downloads ####
+### Downloads ###
 The most update links are available on the download page on the website, under the [test releases section](https://www.jkgalaxies.net/download.html#testdiv), but you can also use the following links which are occasionally updated:
 
 [Binaries](https://github.com/JKGDevs/JediKnightGalaxies/releases/) , [Assets](https://uvu.box.com/shared/static/ctdly3jwnhjcji560sx1czfdgnahbtzi.zip) , 
 [Map Bundle #1](http://jkhub.org/files/file/2652-jedi-knight-galaxies-map-bundle-1/) , [Map Bundle #2](https://uvu.box.com/shared/static/kb0wvyqtz0sarzs0kn1c8h03wrpjgb7c.zip)
 
-Please use discretion when making issue requests on GitHub. The [forum](https://jkhub.org/forum/117-jedi-knight-galaxies/) is a better place for larger discussions on changes that aren't actually bugs.
 
-
-### What is Jedi Knight Galaxies? ###
+## What is Jedi Knight Galaxies? ##
 Jedi Knight Galaxies is a competitive and innovative multiplayer shooter, played out in the Star Wars universe. Currently a full conversion mod, the project was originally based on and modified from Raven Software’s [Jedi Knight: Jedi Academy](https://en.wikipedia.org/wiki/Star_Wars_Jedi_Knight:_Jedi_Academy).  Jedi Knight Galaxies is open source and available completely free of charge; however, you will need the original game in order to play.  Jedi Academy is frequently available on [Steam](http://store.steampowered.com/app/6020/STAR_WARS_Jedi_Knight__Jedi_Academy/) and [GoG](https://www.gog.com/game/star_wars_jedi_knight_jedi_academy) during sales for less than $4. We aim to develop the project into a Large Multiplayer Online game, crossing traditional RPG (role playing game) elements with the fast paced excitement of an FPS (first person shooter).
 
 The project will be released in phases, each building on to the previous one with more aspects of the final goal. The current Phase, JKG: Versus, was first released September 17th, 2012 as a public beta, showcasing the primary FPS elements of the game.  Subsequent updates and versions have been produced since then.  As development progresses, sandbox environments will be added, initial RPG elements will appear, and player vs. enemy combat will be implemented into the faction oriented gameplay. Improved dialog and cinematic features along with skills, powers, and more aspects that belong in a Role-Play Game will be developed, set between the events of Episode IV: A New Hope and Episode III: Revenge of the Sith. Finally, the full-fledged JKG: LMO takes the experience to a much grander level.
@@ -81,7 +76,9 @@ Please be aware of the implications of the GPLv2 licence. In short, be prepared 
 ### If you wish to base your work off JKGalaxies (mod or engine) ###
 * [Fork](https://github.com/JKGDevs/JediKnightGalaxies/fork) the project on Github
 * Change the GAMEVERSION define in codemp/game/g_local.h from "jkgalaxies" to your project name
-* If you make a nice change, please consider back-porting to upstream via pull request as described above. This is so everyone benefits without having to reinvent the wheel for every project.
+* If you make a nice change, please consider back-porting to upstream via pull request as described above. This is so everyone benefits without having to reinvent the wheel for every project.  
+
+Please use discretion when making issue requests on GitHub. The [forum](https://jkhub.org/forum/117-jedi-knight-galaxies/) is a better place for larger discussions on changes that aren't actually bugs.
 
 
 ## Current Project Goals ##
