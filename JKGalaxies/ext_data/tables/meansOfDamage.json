@@ -527,9 +527,10 @@
 		"inventoryName": "@JKG_INVENTORY_MOD_FIRE",
 
 		"modifiers": {
+			"ignoreShield": false,
 			"armor": 0.8,
 			"organic": 1.4,
-			"shield": 0.0,
+			"shield": 0.5,
 			"droid": 0.8
 		},
 
@@ -653,9 +654,10 @@
 		"inventoryName": "@JKG_INVENTORY_MOD_IGNITED",
 
 		"modifiers": {
+			"shieldBlocks": true,
 			"armor": 0.8,
 			"organic": 1.4,
-			"shield": 0.0,
+			"shield": 0.5,
 			"droid": 0.8
 		},
 

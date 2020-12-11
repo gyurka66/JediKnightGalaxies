@@ -4537,7 +4537,7 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 	//Evasion Mechanics
 	//
 
-	//if roll dodges are allowed (off by default since gimmicky in phase 1)
+	//if roll dodges are allowed (on by default)
 	if (jkg_allowDodge.integer > 0 && take > 0 && means->modifiers.dodgeable && targ->client)
 	{
 		/*
