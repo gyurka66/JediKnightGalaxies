@@ -3468,10 +3468,11 @@ qboolean G_VoteGametype( gentity_t *ent, int numArgs, const char *arg1, const ch
 		gt = GT_TEAM;
 	}
 	// logically invalid gametypes, or gametypes not fully implemented in MP
-	if ( gt == GT_SINGLE_PLAYER ) {
+	if ( gt == GT_SINGLE_PLAYER || gt == GT_WARZONE) {
 		trap->SendServerCommand( ent-g_entities, va( "print \"This gametype is not supported (%s).\n\"", arg2 ) );
 		return qfalse;
 	}
+
 	level.votingGametype = qtrue;
 	level.votingGametypeTo = gt;
 	Com_sprintf( level.voteString, sizeof( level.voteString ), "%s %d", arg1, gt );

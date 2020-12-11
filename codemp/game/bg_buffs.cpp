@@ -221,6 +221,21 @@ static qboolean JKG_ParseBuffPassiveData(cJSON* json, jkgBuff_t* pBuff)
 	{
 		pBuff->passive.overridePmoveType.first = qfalse;
 	}
+
+	child = cJSON_GetObjectItem(json, "movemodifier");
+	pBuff->passive.movemodifier = cJSON_ToNumberOpt(child, 1.0);  //--futuza: todo aid more movement type modifiers here, this one only effects overall total speed
+	if (pBuff->passive.movemodifier < 0)
+		pBuff->passive.movemodifier = 0.0;
+
+	if (pBuff->passive.movemodifier != 1.0)
+	{
+		pBuff->passive.movemodifier_cur = pBuff->passive.movemodifier;  //set initial movemodifier
+		child = cJSON_GetObjectItem(json, "maxstacks");
+		int temp = cJSON_ToIntegerOpt(child, 0);  //0 == doesn't stack
+		pBuff->passive.maxstacks = temp < 0 ? 0 : temp; 	
+		pBuff->passive.stacks = 0; //initialize stacks
+	}
+
 	return qtrue;
 }
 

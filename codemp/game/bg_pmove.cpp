@@ -325,6 +325,15 @@ void PM_ApplySpeedConstants()
 		}
 	}
 
+	//check active buffs on player
+	for (int i = 0; i < PLAYERBUFF_BITS; i++)
+	{
+		if (ps->buffsActive & (1 << i))
+		{
+			jkgBuff_t* pOtherBuff = &buffTable[ps->buffs[i].buffID];
+			speedModifier -= (1.0f - pOtherBuff->passive.movemodifier_cur);
+		}
+	}
 
 	if (cmd->forwardmove < 0 && !(cmd->buttons&BUTTON_WALKING) && pm->ps->groundEntityNum != ENTITYNUM_NONE)
 	{//running backwards is slower than running forwards (like SP)

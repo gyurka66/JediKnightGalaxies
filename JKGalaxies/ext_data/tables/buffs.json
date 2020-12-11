@@ -261,10 +261,12 @@
 		
 		"canceling":
 		{
-			
-		}
+		},
 		
-	
+		"passive": {
+			"movemodifier" : 0.9,
+			"maxstacks" : 5
+		}
 	}
 
 	// movement speed modifier is not implemented yet

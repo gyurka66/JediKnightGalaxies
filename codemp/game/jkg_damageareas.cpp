@@ -141,6 +141,8 @@ void G_RemoveBuff(gentity_t* ent, int index)
 			ent->client->pmlock = qfalse;
 		}
 	}
+	pBuff->passive.stacks = 0;
+	pBuff->passive.movemodifier_cur = 1.0;
 }
 
 /*
@@ -241,6 +243,33 @@ void G_BuffEntity(gentity_t* ent, gentity_t* buffer, int buffID, float intensity
 					ent->client->ps.freezeLegsAnim = ent->client->ps.legsAnim;
 					ent->client->ps.freezeTorsoAnim = ent->client->ps.torsoAnim;
 					ent->client->pmlock = ent->client->pmfreeze = qtrue;
+				}
+			}
+
+			if (pBuff->passive.movemodifier && pBuff->passive.maxstacks)
+			{
+				if (pBuff->passive.maxstacks > pBuff->passive.stacks) //if we can fit more stacks, increase the effect
+				{
+					if (pBuff->passive.stacks == 0)
+					{
+						pBuff->passive.movemodifier_cur = pBuff->passive.movemodifier; //initialize first stack
+					}
+
+					//add/subtract additional stacks of movement effects
+					else
+					{
+						if (pBuff->passive.movemodifier > 1)
+						{
+							pBuff->passive.movemodifier_cur += (pBuff->passive.movemodifier - 1.0);		//caution: could go potentially infinite speed
+						}
+
+						if (pBuff->passive.movemodifier < 1 && pBuff->passive.movemodifier > 0)
+						{
+							pBuff->passive.movemodifier_cur -= (1.0 - pBuff->passive.movemodifier);
+							pBuff->passive.movemodifier_cur < 0 ? pBuff->passive.movemodifier_cur = 0 : 0; //can't go slower than 0
+						}
+					}
+					pBuff->passive.stacks++;
 				}
 			}
 			return;

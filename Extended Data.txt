@@ -1,6 +1,6 @@
 # JEDI KNIGHT GALAXIES: ext_data
 
-Jedi Knight Galaxies is easily the most moddable mod for Jedi Academy in existence. Part of this is due to the new systems we implemented with the ext_data files. Almost of them follow JSON syntax.
+Jedi Knight Galaxies is easily the most moddable mod for Jedi Academy in existence. Part of this is due to the new systems we implemented with the ext_data files. Almost of them follow JSON-like syntax (you can use c-style comments).
 
 ## TABLE OF CONTENTS
 
@@ -95,6 +95,8 @@ Each object, whose name is the buff linkage (example, "standard-fire": {} can be
   - means (string/special): The means of damage/damage type of the damage to do.
   - damageRate (integer): How many milliseconds between damage applications.
  - passive (object): Defines data about passive stat bonuses that this buff provides. Contains the following fields:
+  - movemodifier(float): How much the debuff should modifiy overall movement speed by.  eg: 0.8 slows down by 20%, while 1.5 increaes speed by 50%.  Default is 1.0.
+  - maxstacks(unsigned int): If greater than 0, the movemodifier can stack.  eg: setting it to 3, would allow the movemodifier to be stackable up to 3x.  Default is 0.
   - pmove (string/special): Overrides the movement type while this buff is applied. Can be one of the following:
    * PM_NORMAL - Regular movement
    * PM_JETPACK - Jetpack movement
