@@ -54,7 +54,7 @@
             "miss":         { "impactfx": "blasters/blue_impacttiny" },
             "hit":          { "impactfx": "blasters/blue_impacttiny" },
             "deathfx": "blasters/shot_White_vaporize",
-	    "displayName":  "PEP Sting"
+	    "displayName":  "Sting Blast"
         }
     },
     

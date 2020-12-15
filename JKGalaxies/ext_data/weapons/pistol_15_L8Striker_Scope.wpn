@@ -49,9 +49,9 @@
                 "sound/weapons/blasters/stingbeam3.mp3",
                 "sound/weapons/blasters/stingbeam4.mp3"
             ],
-            "projectilefx": "blasters/shot_White_Weak_small",
-            "miss":         { "impactfx": "blasters/yellow_impacttiny" },
-            "hit":          { "impactfx": "blasters/yellow_impacttiny" },
+            "projectilefx": "blasters/shot_White_Flare_small",
+            "miss":         { "impactfx": "blasters/blue_impacttiny" },
+            "hit":          { "impactfx": "blasters/blue_impacttiny" },
             "deathfx": "blasters/shot_White_vaporize",
 	    "displayName":  "Sting Blast"
         },
