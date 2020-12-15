@@ -2103,7 +2103,8 @@ void ClientThink_real( gentity_t *ent ) {
 	}
 
 	// Automatically regenerate health and shield
-	if (jkg_healthRegen.value > 0 && JKG_ClientAlive(ent)) {
+	if (jkg_healthRegen.value > 0 && JKG_ClientAlive(ent)) 
+	{
 		if (ent->lastHealTime < level.time && (ent->damagePlumTime + jkg_healthRegenDelay.value) < level.time)
 		{
 			int maxHealth = ent->client->ps.stats[STAT_MAX_HEALTH];
@@ -2175,6 +2176,29 @@ void ClientThink_real( gentity_t *ent ) {
 						break;
 					}
 				}
+			}
+		}
+	}
+
+	// remove fire and other debuffs that shields protect from
+	if(ent->client->shieldEquipped && ent->client->ps.stats[STAT_SHIELD] > 0 && JKG_ClientAlive(ent))
+	{
+		JKG_CheckShieldRemoval(&ent->client->ps);	
+	}
+
+	// remove toxins and other debuffs that filters protects
+	if (ent->inventory->size() > 0 && JKG_ClientAlive(ent))
+	{
+		// Play the sound effect for the shield recharging, if one exists
+		for (auto it = ent->inventory->begin(); it != ent->inventory->end(); ++it)
+		{
+			if (it->equipped && ( it->id->itemType == ITEM_ARMOR || it->id->itemType == ITEM_CLOTHING) )
+			{
+				if (it->id->armorData.pArm->filter)
+				{
+					JKG_CheckFilterRemoval(&ent->client->ps);
+				}
+				break;
 			}
 		}
 	}

@@ -86,6 +86,38 @@ void JKG_CheckRollRemoval(playerState_t* ps)
 	}
 }
 
+//Removes all buffs that have the shieldRemoval flag set
+void JKG_CheckShieldRemoval(playerState_t* ps)
+{
+	for (int i = 0; i < PLAYERBUFF_BITS; i++)
+	{
+		if (ps->buffsActive & (1 << i))
+		{
+			jkgBuff_t* pBuff = &buffTable[ps->buffs[i].buffID];
+			if (pBuff->cancel.shieldRemoval)
+			{
+				ps->buffsActive &= ~(1 << i); // remove this buff
+			}
+		}
+	}
+}
+
+//Removes all buffs that have the filterRemoval flag set
+void JKG_CheckFilterRemoval(playerState_t* ps)
+{
+	for (int i = 0; i < PLAYERBUFF_BITS; i++)
+	{
+		if (ps->buffsActive & (1 << i))
+		{
+			jkgBuff_t* pBuff = &buffTable[ps->buffs[i].buffID];
+			if (pBuff->cancel.filterRemoval)
+			{
+				ps->buffsActive &= ~(1 << i); // remove this buff
+			}
+		}
+	}
+}
+
 // Resolves a buff name to an index in the lookup table
 int JKG_ResolveBuffName(const char* szBuffName)
 {
@@ -166,6 +198,12 @@ static qboolean JKG_ParseBuffCanceling(cJSON* json, jkgBuff_t* pBuff)
 
 	child = cJSON_GetObjectItem(json, "rollRemoval");
 	pBuff->cancel.rollRemoval = cJSON_ToBooleanOpt(child, false);
+
+	child = cJSON_GetObjectItem(json, "shieldRemoval");
+	pBuff->cancel.shieldRemoval = cJSON_ToBooleanOpt(child, false);
+
+	child = cJSON_GetObjectItem(json, "filterRemoval");
+	pBuff->cancel.filterRemoval = cJSON_ToBooleanOpt(child, false);
 
 	child = cJSON_GetObjectItem(json, "cancelOther");
 	if (child)

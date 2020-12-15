@@ -8,6 +8,7 @@
 			"noCategoryStack": true,
 			"waterRemoval": true,
 			"rollRemoval": true,
+			"shieldRemoval": true,
 
 			"cancelOther": [
 				{
@@ -74,7 +75,8 @@
 
 		"canceling": {
 			"noBuffStack": true,
-			"noCategoryStack": true
+			"noCategoryStack": true,
+			"shieldRemoval": true
 		},
 		
 		"damage":
@@ -105,6 +107,7 @@
 			"priority": 50,
 			"noBuffStack": false,
 			"noCategoryStack": false,
+			"shieldRemoval": true,
 
 			"cancelOther": [
 				{
@@ -236,6 +239,7 @@
 
 		"canceling": {
 			"noBuffStack": true,
+			"filterRemoval": true,
 			"noCategoryStack": true
 		},
 
