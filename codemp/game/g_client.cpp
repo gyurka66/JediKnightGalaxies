@@ -3230,8 +3230,15 @@ void ClientSpawn(gentity_t *ent, qboolean respawn) {
 	//Do per-spawn force power initialization
 	WP_SpawnInitForcePowers( ent );
 
-	// health will count down towards max_health
-	ent->health = client->ps.stats[STAT_HEALTH] = client->ps.stats[STAT_MAX_HEALTH];
+	//check if we need to give more hp due to items
+	for (auto it = ent->inventory->begin(); it != ent->inventory->end(); ++it) 
+	{
+		if (it->equipped && ( it->id->itemType == ITEM_ARMOR || it->id->itemType == ITEM_CLOTHING) )
+		{
+			ent->client->ps.stats[STAT_MAX_HEALTH] += it->id->armorData.pArm->hp;
+		}
+	}
+	ent->health = client->ps.stats[STAT_HEALTH] = client->ps.stats[STAT_MAX_HEALTH];  // health will count down towards max_health (if it exceeds)
 
 	G_SetOrigin( ent, spawn_origin );
 	VectorCopy( spawn_origin, client->ps.origin );
