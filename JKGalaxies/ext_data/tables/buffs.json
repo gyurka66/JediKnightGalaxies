@@ -94,6 +94,96 @@
 			}
 		}
 	},
+	
+	//for sting beams, adds stacking slows, does no damage
+	"standard-sting":
+	{
+		"category": "slow",
+		
+		"canceling": 
+		{
+			"priority": 50,
+			"noBuffStack": false,
+			"noCategoryStack": false,
+
+			"cancelOther": [
+				{
+					"category": "haste",
+					"priority": 100
+				}
+			]
+		},
+		
+		"passive": {
+			"movemodifier" : 0.9,
+			"maxstacks" : 5
+		},
+		
+		"visuals":
+		{
+		
+		}
+	},
+	
+	//stacking movement speed decrease, does no damage
+	"standard-slow":
+	{
+		"category": "slow",
+		
+		"canceling": 
+		{
+			"priority": 75,
+			"noBuffStack": false,
+			"noCategoryStack": false,
+
+			"cancelOther": [
+				{
+					"category": "haste",
+					"priority": 100
+				}
+			]
+		},
+		
+		"passive": {
+			"movemodifier" : 0.8,
+			"maxstacks" : 4
+		},
+		
+		"visuals":
+		{
+		
+		}
+	},
+	
+	//stacking movement speed increase, does no damage
+	"standard-haste":
+	{
+		"category": "haste",
+		
+		"canceling": 
+		{
+			"priority": 50,
+			"noBuffStack": false,
+			"noCategoryStack": false,
+
+			"cancelOther": [
+				{
+					"category": "slow",
+					"priority": 100
+				}
+			]
+		},
+		
+		"passive": {
+			"movemodifier" : 1.15,
+			"maxstacks" : 5
+		},
+		
+		"visuals":
+		{
+		
+		}
+	},
 
 	"standard-carbonite": {
 		"category": "carbonite",
@@ -250,22 +340,6 @@
 			"means": "MOD_CURED",
 			"damagerate": 850,
 			"deadly": false
-		}
-	},
-	
-	//sting beam, adds stacking slows, does no damage
-	"standard-sting":
-	{
-		"category": "slow",
-		"priority": 50,
-		
-		"canceling":
-		{
-		},
-		
-		"passive": {
-			"movemodifier" : 0.9,
-			"maxstacks" : 5
 		}
 	}
 

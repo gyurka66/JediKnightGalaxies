@@ -4844,6 +4844,10 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker,
 				{
 					VectorCopy(targ->client->ps.origin, targ->pos1);
 				}
+
+				//if our movement was frozen unfreeze at death
+				client->pmfreeze = qfalse;
+				client->pmlock = qfalse;
 			}
 			else if (targ->s.eType == ET_NPC)
 			{ //g2animent

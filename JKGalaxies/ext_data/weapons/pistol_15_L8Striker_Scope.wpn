@@ -53,7 +53,7 @@
             "miss":         { "impactfx": "blasters/yellow_impacttiny" },
             "hit":          { "impactfx": "blasters/yellow_impacttiny" },
             "deathfx": "blasters/shot_White_vaporize",
-	    "displayName":  "Sting"
+	    "displayName":  "Sting Blast"
         },
 	
 	        "scope": {
@@ -89,14 +89,14 @@
     
     "firemode1": {
         "damage": {
-		"damage": 20//15,
-//		"buffs": [
-//			{
-//				"buff": "standard-slow",
-//				"duration": 1000
-//			}
-//		]
-	},
+			"damage": 15,
+			"buffs": [
+			{
+				"buff": "standard-sting",
+				"duration": 5000
+			}
+			]
+		},
         "ammocost":     1,
         "firedelay":    200,
         "firingtype":   "semi",

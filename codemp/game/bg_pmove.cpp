@@ -3063,6 +3063,9 @@ static void PM_CrashLand( void ) {
 				if (pm->ps->forcePower < 0) {
 					pm->ps->forcePower = 0;
 				}
+
+				// Check to see if we should remove roll related debuffs.
+				JKG_CheckRollRemoval(pm->ps);
 			}
 		}
 	}
