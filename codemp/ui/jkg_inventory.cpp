@@ -824,7 +824,7 @@ void JKG_Inventory_SendItemToACI(int nACIIndex)
 	}
 
 	itemInstance_t* pItem = pItems[nSelected].second;
-	if (pItem->id->itemType == ITEM_JETPACK || pItem->id->itemType == ITEM_CONSUMABLE || pItem->id->itemType == ITEM_WEAPON)
+	if (pItem->id->itemType == ITEM_JETPACK || pItem->id->itemType == ITEM_CONSUMABLE || pItem->id->itemType == ITEM_WEAPON || pItem->id->itemType == ITEM_SHIELD)
 	{
 		menuDef_t* menu = Menus_FindByName("jkg_inventory");
 
