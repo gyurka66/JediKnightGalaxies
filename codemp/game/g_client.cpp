@@ -1689,6 +1689,7 @@ qboolean ClientUserinfoChanged( int clientNum ) {
 	int team = TEAM_FREE;
 	int health = 100;
 	int maxHealth = 100;
+	int maxStamina = 100;
 	char *s = NULL;
 	char *value = NULL;
 	char userinfo[MAX_INFO_STRING] = {0};
@@ -1817,6 +1818,11 @@ qboolean ClientUserinfoChanged( int clientNum ) {
 	// 	client->pers.maxHealth = 100;
 	// }
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
+	
+
+	//also set maxforce/stamina
+	client->pers.maxStamina = maxStamina;
+	client->ps.stats[STAT_MAX_STAMINA] = client->pers.maxStamina; //force and stamina are the same thing in JKG
 
 	if (level.gametype >= GT_TEAM) {
 		s = Info_ValueForKey( userinfo, "teamoverlay" );
@@ -3047,8 +3053,16 @@ void ClientSpawn(gentity_t *ent, qboolean respawn) {
 	if ( client->pers.maxHealth < 1 || client->pers.maxHealth > maxHealth ) {
 		client->pers.maxHealth = 100;
 	}
+
+	// set max stamina
+	if (client->pers.maxStamina < 1 || client->pers.maxStamina > 100)
+	{
+		client->pers.maxStamina = 100;
+	}
+
 	// clear entity values
 	client->ps.stats[STAT_MAX_HEALTH] = client->pers.maxHealth;
+	client->ps.stats[STAT_MAX_STAMINA] = client->pers.maxStamina;
 
 	client->ps.eFlags = flags;
 	client->mGameFlags = gameFlags;
@@ -3236,9 +3250,12 @@ void ClientSpawn(gentity_t *ent, qboolean respawn) {
 		if (it->equipped && ( it->id->itemType == ITEM_ARMOR || it->id->itemType == ITEM_CLOTHING) )
 		{
 			ent->client->ps.stats[STAT_MAX_HEALTH] += it->id->armorData.pArm->hp;
+			client->ps.stats[STAT_MAX_STAMINA] += it->id->armorData.pArm->stamina;
 		}
 	}
 	ent->health = client->ps.stats[STAT_HEALTH] = client->ps.stats[STAT_MAX_HEALTH];  // health will count down towards max_health (if it exceeds)
+	
+	ent->playerState->forcePower = client->ps.stats[STAT_MAX_STAMINA];  //most common usage is: pm->ps->forcePower
 
 	G_SetOrigin( ent, spawn_origin );
 	VectorCopy( spawn_origin, client->ps.origin );

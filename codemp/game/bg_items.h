@@ -107,6 +107,8 @@ typedef struct {
 typedef struct {
 	char consumeScript[MAX_CONSUMABLE_SCRIPTNAME];
 	int consumeAmount;
+	qboolean partHealthReq;  //if set to true, it can only be consumed if hp < maxhealth
+	qboolean partStaminaReq;  //if set to true, it can only be consumed if stamina < maxstamina
 } itemConsumableData_t;
 
 // Shields

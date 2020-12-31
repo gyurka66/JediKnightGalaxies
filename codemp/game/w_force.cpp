@@ -883,9 +883,9 @@ void WP_ForcePowerRegenerate( gentity_t *self, int overrideAmt )
 		self->client->ps.forcePower++;
 	}
 
-	if ( self->client->ps.forcePower > 100 )
+	if ( self->client->ps.forcePower > self->client->ps.stats[STAT_MAX_STAMINA])
 	{ //cap it off at the max (default 100)
-		self->client->ps.forcePower = 100;
+		self->client->ps.forcePower = self->client->ps.stats[STAT_MAX_STAMINA];
 	}
 
 	//self->x.forcePower = self->client->ns.forcePower;

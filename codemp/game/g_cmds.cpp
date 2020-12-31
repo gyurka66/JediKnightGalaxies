@@ -212,6 +212,32 @@ int ClientNumberFromString( gentity_t *to, const char *s, qboolean allowconnecti
 }
 
 
+//damage & healing plums copied from g_combat
+/*
+===========
+PlumItems
+===========
+*/
+
+void PlumItems(gentity_t *ent, vec3_t origin, int damage, int meansOfDeath, int shield, qboolean weak)
+{
+	meansOfDamage_t* means = JKG_GetMeansOfDamage(meansOfDeath);
+
+	if (means->plums.noDamagePlums)
+	{	// this means of death has no damage plums 
+		return;
+	}
+
+	if (ent->damagePlumTime != level.time) {
+		ent->damagePlum = G_TempEntity(origin, EV_DAMAGEPLUM);
+		ent->damagePlumTime = level.time;
+	}
+	ent->damagePlum->s.time = damage;
+	ent->damagePlum->s.eventParm = meansOfDeath;
+	ent->damagePlum->s.generic1 = shield;
+	ent->damagePlum->s.groundEntityNum = weak;
+}
+
 
 /*
 =================
@@ -1210,8 +1236,19 @@ void JKG_ConsumeItem_f(gentity_t* ent) {
 	char* args = ConcatArgs(1);
 	int argNum = atoi(args);
 
-	if (!BG_ConsumeItem(ent, argNum)) {
+	int initHP = ent->client->ps.stats[STAT_HEALTH];    //get initial health before consuming item		--futuza: this is a hacky way of doing it, really needs a LUA function to figure this out
+	if (!BG_ConsumeItem(ent, argNum)) 
+	{
 		trap->SendServerCommand(ent - g_entities, "print \"Could not consume that item - either it is not a consumable or it is not a valid inventory item\n\"");
+	}
+	int endHP = ent->client->ps.stats[STAT_HEALTH];   //get final health after consuming item
+	int take = endHP - initHP;
+	if (take != 0)
+	{
+		if (take > 0)
+			PlumItems(ent, ent->r.currentOrigin, take, JKG_GetMeansOfDamageIndex("MOD_CURED"), 0, take <= (ent->s.maxhealth / 4));
+		else
+			PlumItems(ent, ent->r.currentOrigin, -take, JKG_GetMeansOfDamageIndex("MOD_POISONED"), 0, -take <= (ent->s.maxhealth / 4));	//take is negated (to pass correct parameters)
 	}
 }
 
@@ -2133,32 +2170,6 @@ void Cmd_Team_f( gentity_t *ent ) {
 // INVENTORY RELATED COMMANDS
 //==========================================================
 
-//damage & healing plums copied from g_combat
-/*
-===========
-PlumItems
-===========
-*/
-
-void PlumItems(gentity_t *ent, vec3_t origin, int damage, int meansOfDeath, int shield, qboolean weak)
-{
-	meansOfDamage_t* means = JKG_GetMeansOfDamage(meansOfDeath);
-
-	if (means->plums.noDamagePlums)
-	{	// this means of death has no damage plums 
-		return;
-	}
-
-	if (ent->damagePlumTime != level.time) {
-		ent->damagePlum = G_TempEntity(origin, EV_DAMAGEPLUM);
-		ent->damagePlumTime = level.time;
-	}
-	ent->damagePlum->s.time = damage;
-	ent->damagePlum->s.eventParm = meansOfDeath;
-	ent->damagePlum->s.generic1 = shield;
-	ent->damagePlum->s.groundEntityNum = weak;
-}
-
 /*
 =================
 JKG_Cmd_ItemAction_f
@@ -2214,7 +2225,8 @@ void JKG_Cmd_ItemAction_f(gentity_t *ent, int itemNum)
 	if (ent->inventory->at(itemNum).id->itemType == ITEM_CONSUMABLE)
 	{
 		int initHP = ent->client->ps.stats[STAT_HEALTH];    //get initial health before consuming item		--futuza: this is a hacky way of doing it, really needs a LUA function to figure this out
-		BG_ConsumeItem(ent, itemNum);
+		if (!BG_ConsumeItem(ent, itemNum))
+			return;
 		int endHP = ent->client->ps.stats[STAT_HEALTH];   //get final health after consuming item
 
 		int take = endHP - initHP;
@@ -2223,7 +2235,7 @@ void JKG_Cmd_ItemAction_f(gentity_t *ent, int itemNum)
 			if (take > 0)
 				PlumItems(ent, ent->r.currentOrigin, take, JKG_GetMeansOfDamageIndex("MOD_CURED"), 0, take <= (ent->s.maxhealth / 4));
 			else
-				PlumItems(ent, ent->r.currentOrigin, -take, JKG_GetMeansOfDamageIndex("MOD_POISONED"), 0, -take <= (ent->s.maxhealth / 4));	//take is negated (to pass correct parameters
+				PlumItems(ent, ent->r.currentOrigin, -take, JKG_GetMeansOfDamageIndex("MOD_POISONED"), 0, -take <= (ent->s.maxhealth / 4));	//take is negated (to pass correct parameters)
 		}
 	}
 

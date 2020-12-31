@@ -214,6 +214,9 @@ static qboolean JKG_ParseArmorFile(char* buffer, const char* fileName, armorData
 	jsonNode = cJSON_GetObjectItem(json, "hp");
 	armorData.hp = cJSON_ToIntegerOpt(jsonNode, 0);
 
+	jsonNode = cJSON_GetObjectItem(json, "stamina");
+	armorData.stamina = cJSON_ToIntegerOpt(jsonNode, 0);
+
 	jsonNode = cJSON_GetObjectItem(json, "filter");
 	armorData.filter = cJSON_ToBooleanOpt(jsonNode, false);
 

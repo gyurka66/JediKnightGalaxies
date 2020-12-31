@@ -1016,6 +1016,17 @@ qboolean BG_ConsumeItem(gentity_t* ent, int itemStackNum) {
 		// Not enough quantity to consume this item
 		return qfalse;
 	}
+	
+
+	if(item->id->consumableData.partHealthReq && ent->health >= ent->client->ps.stats[STAT_MAX_HEALTH] )
+	{
+		return qfalse;
+	}
+
+	if (item->id->consumableData.partStaminaReq && ent->playerState->forcePower >= ent->client->ps.stats[STAT_MAX_STAMINA] )
+	{
+		return qfalse;
+	}
 
 	GLua_ConsumeItem(ent, item);
 	BG_ChangeItemStackQuantity(ent, itemStackNum, item->quantity - consumeAmount);
@@ -1239,6 +1250,14 @@ static bool BG_LoadItem(const char *itemFilePath, itemData_t *itemData)
 		// consumeAmount controls the amount of items in the stack that get consumed
 		jsonNode = cJSON_GetObjectItem(json, "consumeAmount");
 		itemData->consumableData.consumeAmount = cJSON_ToIntegerOpt(jsonNode, 1);
+
+		// partHealthReq only allows the item to be consumed if the entity has partial health
+		jsonNode = cJSON_GetObjectItem(json, "partHealthReq");
+		itemData->consumableData.partHealthReq = (qboolean)cJSON_ToBooleanOpt(jsonNode, false);
+
+		// partStaminaReq only allows the item to be consumed if the entity lacks stamina
+		jsonNode = cJSON_GetObjectItem(json, "partStaminaReq");
+		itemData->consumableData.partStaminaReq = (qboolean)cJSON_ToBooleanOpt(jsonNode, false);
 	}
 	else if (itemData->itemType == ITEM_SHIELD) {
 		memset(&itemData->shieldData, 0, sizeof(itemData->shieldData));

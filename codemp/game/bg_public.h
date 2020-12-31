@@ -614,6 +614,7 @@ typedef enum {
 	STAT_CLIENTS_READY,				// bit mask of clients wishing to exit the intermission (FIXME: configstring?)
 	STAT_MAX_HEALTH,				// Maximum health
 	// Jedi Knight Galaxies
+	STAT_MAX_STAMINA,
 	STAT_MAX_SHIELD,				// Maximum shield
 	STAT_AMMO,						// Ammo in current weapon
 	STAT_TOTALAMMO,					// Total ammo
