@@ -1801,24 +1801,24 @@ int PM_GetSaberStance(void)
 			if (pm->cmd.forwardmove < 0)
 			{
 				// moving backward/sideways
-				anim = BOTH_P7_S7_T_;
+				anim = BOTH_P1_S1_T_;
 			}
 			else if (pm->cmd.forwardmove != 0)
 			{
-				anim = BOTH_P1_S1_T_; // use top as default, since most stances face that way anyway --eez
+				anim = BOTH_P7_S7_T_; // use top as default, since most stances face that way anyway --eez
 			}
 			if (pm->cmd.rightmove != 0)
 			{
 				// moving sideways
 				if (pm->cmd.rightmove > 0)	// moving right
 				{
-					if (anim == BOTH_P1_S1_T_)	// going forward
+					if (anim == BOTH_P7_S7_T_)	// going forward
 					{
-						anim = BOTH_P1_S1_BL;
+						anim = BOTH_P1_S1_BR;
 					}
-					else if (anim == BOTH_P7_S7_T_)	// going backward
+					else if (anim == BOTH_P1_S1_T_)	// going backward
 					{
-						anim = BOTH_P1_S1_T_;
+						anim = BOTH_P7_S7_T_;
 					}
 					else								// just straight right
 					{
@@ -1827,14 +1827,14 @@ int PM_GetSaberStance(void)
 				}
 				else						// moving left
 				{
-					if (anim == BOTH_P1_S1_T_)
+					if (anim == BOTH_P7_S7_T_)
 					{
 						// forward
-						anim = BOTH_P1_S1_BR;
+						anim = BOTH_P1_S1_BL;
 					}
-					else if (anim == BOTH_P7_S7_T_)	// going backward
+					else if (anim == BOTH_P1_S1_T_)	// going backward
 					{
-						anim = BOTH_P7_S7_T_;
+						anim = BOTH_P1_S1_T_;
 					}
 					else
 					{

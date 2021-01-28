@@ -3209,7 +3209,7 @@ void ClientSpawn(gentity_t *ent, qboolean respawn) {
 
 						}
 
-						BG_GiveItem(ent, item, true);
+						BG_GiveItem(ent, item, false); //If ACI is not false lightsabers can be messed up
 
 						// Give max ammo for both firing modes
 						for (int i = 0; i < weapon->numFiringModes; i++) {

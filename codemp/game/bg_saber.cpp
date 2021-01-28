@@ -2441,6 +2441,30 @@ qboolean PM_CanDoRollStab( void )
 	return qtrue;
 }
 
+int PM_GoToBlockFromAttack()
+{
+	pm->ps->saberActionFlags |= (1 << SAF_BLOCKING);
+
+	if (pm->ps->forcePower >= 30) // otherwise it could go into the negatives and overflow
+	{
+		pm->ps->forcePower -= 30;	// drains force power, not BP. my mistake --eez
+	}
+	else
+	{
+		pm->ps->forcePower = 0;
+	}
+
+	if (pm->ps->blockPoints >= 30) // otherwise it could go into the negatives and overflow
+	{
+		pm->ps->blockPoints -= 30;	// drains fBP
+	}
+	else
+	{
+		pm->ps->blockPoints = 0;
+	}
+	return LS_READY;
+}
+
 int PM_DoFeint(int curmove, int stance)
 {
 	int newQuad = -1;
@@ -3276,7 +3300,7 @@ weapChecks:
 			if ( curmove >= LS_S_TL2BR && curmove <= LS_S_T2B &&
 				pm->cmd.buttons & BUTTON_IRONSIGHTS)
 			{//allow the player to fake into another transition
-				newmove = PM_DoFeint(curmove, pm->ps->fd.saberAnimLevel);
+				newmove = PM_GoToBlockFromAttack();
 				if(newmove == LS_NONE)
 				{//no movement, just do the attack
 					newmove = LS_A_TL2BR + (curmove-LS_S_TL2BR);
@@ -3604,7 +3628,7 @@ qboolean PM_CanDoThisMove(short newMove, unsigned int stance)
 	}
 	return qtrue;
 }
-
+//For setting the appropriate anims, affected parts, flags, ect. for a saber move then passing it to PM_SetAnim() Also deducts Blockpoints
 void PM_SetSaberMove(short newMove)
 {
 	unsigned int setflags = SaberStances[pm->ps->fd.saberAnimLevel].moves[newMove].setanimflag;
@@ -3619,6 +3643,11 @@ void PM_SetSaberMove(short newMove)
 	if(SaberStances[pm->ps->fd.saberAnimLevel].moves[newMove].FPdrain)
 	{
 		pm->ps->forcePower -= SaberStances[pm->ps->fd.saberAnimLevel].moves[newMove].FPdrain;
+		pm->ps->blockPoints -= SaberStances[pm->ps->fd.saberAnimLevel].moves[newMove].FPdrain;
+		if (pm->ps->blockPoints < 0)
+		{
+			pm->ps->blockPoints = 0;
+		}
 		if(pm->ps->forcePower < 0)
 		{
 			pm->ps->forcePower = 0;
@@ -3782,7 +3811,7 @@ void PM_SetSaberMove(short newMove)
 		{//not trying to run, duck or jump
 			if( pm->ps->saberActionFlags & (1 << SAF_BLOCKING) &&
 				!PM_SaberInParry( newMove ) && !PM_SaberInKnockaway( newMove ) && !PM_SaberInBrokenParry( newMove ) && !PM_SaberInReflect( newMove ) && !BG_SaberInSpecial(newMove))
-			{
+			{ //if blocking and saber is not occupied
 				parts = SETANIM_TORSO;
 				anim = PM_GetSaberStance();
 			}

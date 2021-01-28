@@ -3079,7 +3079,11 @@ void G_RunFrame( int levelTime ) {
 
 						ent->client->ps.blockPoints++;
 						rechargeRate += rechargeDifference;
-						if( ent->client->ps.saberActionFlags & (1 << SAF_BLOCKING) )
+						//if( ent->client->ps.saberActionFlags & (1 << SAF_BLOCKING) )
+						//{
+						//	rechargeRate -= 300;
+						//}
+						if (ent->client->pers.cmd.buttons & BUTTON_WALKING)
 						{
 							rechargeRate -= 300;
 						}
