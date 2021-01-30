@@ -1818,7 +1818,7 @@ int PM_GetSaberStance(void)
 					}
 					else if (anim == BOTH_P1_S1_T_)	// going backward
 					{
-						anim = BOTH_P7_S7_T_;
+						anim = BOTH_P1_S1_T_;
 					}
 					else								// just straight right
 					{
@@ -1834,7 +1834,7 @@ int PM_GetSaberStance(void)
 					}
 					else if (anim == BOTH_P1_S1_T_)	// going backward
 					{
-						anim = BOTH_P1_S1_T_;
+						anim = BOTH_P7_S7_T_;
 					}
 					else
 					{

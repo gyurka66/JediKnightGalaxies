@@ -720,7 +720,8 @@ typedef struct
 	int baseDamageDefault;
 	int baseDamageMin;
 	int baseDamageMax;
-	int BPdrain;						// how much to drain BP (based on NUMBER of PLANES)
+	int BPdrain;						// how much BP attacks damage (This will get multiplied by the number of Octants the opponent misses when blocking)
+	int BPcost;							// how much BP attacks cost
 
 
 	int defensePenetration;				// higher numbers for faster stances.

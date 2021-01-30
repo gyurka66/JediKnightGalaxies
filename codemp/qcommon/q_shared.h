@@ -402,9 +402,9 @@ typedef enum {
 
 typedef enum {
 	BLOCKED_NONE,
-	BLOCKED_BOUNCE_MOVE,
-	BLOCKED_PARRY_BROKEN,
-	BLOCKED_ATK_BOUNCE,
+	BLOCKED_BOUNCE_MOVE, //Your parry got knocked away
+	BLOCKED_PARRY_BROKEN, //Your Parry got broken
+	BLOCKED_ATK_BOUNCE, //Your Attack is bouncing back.
 	BLOCKED_UPPER_RIGHT,
 	BLOCKED_UPPER_LEFT,
 	BLOCKED_LOWER_RIGHT,

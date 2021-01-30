@@ -1872,6 +1872,17 @@ qboolean JKG_ParseSaberStanceFile( char *filename )
 		theStance.BPdrain = 16;
 	}
 
+	jsonNode = cJSON_GetObjectItem(json, "BPcost");
+	if (jsonNode)
+	{
+		stance = cJSON_ToInteger(jsonNode);
+		theStance.BPcost = stance;
+	}
+	else
+	{
+		theStance.BPcost = 5;
+	}
+
 	jsonNode = cJSON_GetObjectItem (json, "defensePenetration");
     if(jsonNode)
 	{
