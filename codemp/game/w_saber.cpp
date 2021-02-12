@@ -2098,11 +2098,12 @@ static QINLINE qboolean WP_GetSaberDeflectionAngle( gentity_t *attacker, gentity
 }
 
 extern void BG_SetAnim(playerState_t* ps, animation_t* animations, int setAnimParts, int anim, int setAnimFlags);
+//Instantly puts the entinty into a bounce anim and changes it's sabermove and saberblocked for bouncing.
 qboolean WP_BounceSaber(gentity_t* attacker)
 {
 	attacker->client->ps.saberMove = PM_SaberBounceForAttack(attacker->client->ps.fd.saberAnimLevel, attacker->client->ps.saberMove);
 	attacker->client->ps.saberBlocked = BLOCKED_ATK_BOUNCE;
-	BG_SetAnim(&attacker->client->ps, pm->animations, SETANIM_TORSO, saberMoveData[attacker->client->ps.saberMove].animToUse, saberMoveData[attacker->client->ps.saberMove].animSetFlags);
+	BG_SetAnim(&attacker->client->ps, pm->animations, SETANIM_TORSO, saberMoveData[attacker->client->ps.saberMove].animToUse, saberMoveData[attacker->client->ps.saberMove].animSetFlags); //needs to set anim manually here otherwise the anim would trigger too late and wouldn't look good
 	return qtrue;
 
 }
@@ -3632,7 +3633,7 @@ void WP_SaberBounceSound( gentity_t *ent, int saberNum, int bladeNum )
 	}
 }
 
-//Determines how many quadrants away is the blocking direction from the attacking direction
+//Determines how many quadrants away is the blocking direction from the attacking direction -1 means that the attacker did not attack
 int WP_NumberOfOctantsWrong(gentity_t* blocker, int attackerSaberMove)
 {
 	qboolean iForward = (blocker->client->pers.cmd.forwardmove > 0);
@@ -3720,7 +3721,7 @@ int WP_NumberOfOctantsWrong(gentity_t* blocker, int attackerSaberMove)
 		octantswrong = 2;
 
 	if (attackingoctant == 0)
-		octantswrong = 0;
+		octantswrong = -1;
 
 	//return 30; // for now
 	return octantswrong;
@@ -4201,6 +4202,7 @@ static QINLINE qboolean CheckSaberDamage(gentity_t* self, int rSaberNum, int rBl
 	}
 
 	qboolean enemyisblocking = qfalse;
+	int octantsWrong = 0; //the difference between the block and attack directions, there are 8 possible directions.
 	//rww - I'm saying || tr.startsolid here, because otherwise your saber tends to skip positions and go through
 	//people, and the compensation traces start in their bbox too. Which results in the saber passing through people
 	//when you visually cut right through them. Which sucks.
@@ -4246,12 +4248,13 @@ static QINLINE qboolean CheckSaberDamage(gentity_t* self, int rSaberNum, int rBl
 			// Block, damn it! But only if we have enough BP...
 			int BPneeded;
 			otherOwner = &g_entities[tr.entityNum];
+			octantsWrong = WP_NumberOfOctantsWrong(&g_entities[tr.entityNum], self->client->ps.saberMove);
 
 			// Figure out how much BP to get from that.
-			BPneeded = JKG_GetBPNeededForBlock(&g_entities[tr.entityNum], self, WP_NumberOfOctantsWrong(&g_entities[tr.entityNum], self->client->ps.saberMove));
+			BPneeded = JKG_GetBPNeededForBlock(&g_entities[tr.entityNum], self, octantsWrong);
 
 			// TODO: make defense based off of style too
-			if (otherOwner->client->ps.blockPoints >= BPneeded)
+			if (otherOwner->client->ps.blockPoints >= BPneeded && !BG_SaberInSpecial(self->client->ps.saberMove))
 			{
 				saberDoClashEffect = qtrue;
 				VectorCopy(tr.endpos, saberClashPos);
@@ -4409,13 +4412,13 @@ static QINLINE qboolean CheckSaberDamage(gentity_t* self, int rSaberNum, int rBl
 
 		//Damage the blocpoints of the enemy. it takes half the damage it would if it hit the body 
 		int BPneeded;
-		int octantsWrong = WP_NumberOfOctantsWrong(otherOwner, self->client->ps.saberMove); //the difference of directions between the attack and the defense
+		octantsWrong = WP_NumberOfOctantsWrong(otherOwner, self->client->ps.saberMove); //the difference of directions between the attack and the defense
 
 		// Figure out how much BP to get from that.
 		BPneeded = JKG_GetBPNeededForBlock(otherOwner, self, octantsWrong, 0.5);
 
 		// TODO: make defense based off of style too
-		if (otherOwner->client->ps.blockPoints >= BPneeded && octantsWrong < 4) //Checks if the defender has enough blockpoints and if he blocked in the completely wrong direction
+		if (otherOwner->client->ps.blockPoints >= BPneeded && octantsWrong < 4 && !BG_SaberInSpecial(self->client->ps.saberMove)) //Checks if the defender has enough blockpoints and if he didn't block in the completely wrong direction
 		{
 			if (otherOwner->client->saberSaberBlockDebounce < level.time)
 			{
@@ -4451,7 +4454,7 @@ static QINLINE qboolean CheckSaberDamage(gentity_t* self, int rSaberNum, int rBl
 
 
 	// this executes if either a blade is struck, or if it was a bodyhit and the defender had enough blockpoints
-	if (enemyisblocking)
+	if (enemyisblocking && octantsWrong != 0) // octantsWrong != 0 because i want blockers to be able to immediately retaliate if they block perfectly, but i also want touching to "lock" the sabers.
 	{
 		otherUnblockable = qfalse;
 

@@ -2960,12 +2960,9 @@ void PM_WeaponLightsaber(void)
 		{
 			case BLOCKED_BOUNCE_MOVE:
 				{ //act as a bounceMove and reset the saberMove instead of using a seperate value for it
-					if (!PM_SaberInKnockaway(pm->ps->saberMove))
-					{
-						pm->ps->torsoTimer = 0;
-						PM_SetSaberMove(pm->ps->saberMove);
-						pm->ps->weaponTime = pm->ps->torsoTimer;
-					}
+					pm->ps->torsoTimer = 0;
+					PM_SetSaberMove(pm->ps->saberMove);
+					pm->ps->weaponTime = pm->ps->torsoTimer;
 					pm->ps->saberBlocked = 0;
 				}
 				break;
