@@ -3633,7 +3633,7 @@ void WP_SaberBounceSound( gentity_t *ent, int saberNum, int bladeNum )
 	}
 }
 
-//Determines how many quadrants away is the blocking direction from the attacking direction -1 means that the attacker did not attack
+//Determines how many quadrants away is the blocking direction from the attacking direction. -1 means that the attacker did not attack
 int WP_NumberOfOctantsWrong(gentity_t* blocker, int attackerSaberMove)
 {
 	qboolean iForward = (blocker->client->pers.cmd.forwardmove > 0);
@@ -3730,14 +3730,17 @@ int WP_NumberOfOctantsWrong(gentity_t* blocker, int attackerSaberMove)
 //Calculates the BlockPoints necessary to block an attack. Watch out! This assumes that the attacker and the blocker are both valid clients
 int JKG_GetBPNeededForBlock( gentity_t *blocker, gentity_t* attacker, int octantsWrong, double arbitraryModifier)
 {
-	int attackerSaberStyle = attacker->client->ps.fd.saberAnimLevel;
-	if (blocker->client->pers.cmd.buttons & BUTTON_WALKING || blocker->client->ps.saberActionFlags & (1 << SAF_BLOCKING))
+	if (octantsWrong > 0)
 	{
-		return round((double)SaberStances[attackerSaberStyle].BPdrain * (double)octantsWrong * arbitraryModifier);
-	}
-	else
-	{
-		return round((double)SaberStances[attackerSaberStyle].BPdrain * (double)octantsWrong * arbitraryModifier*2);
+		int attackerSaberStyle = attacker->client->ps.fd.saberAnimLevel;
+		if (blocker->client->pers.cmd.buttons & BUTTON_WALKING || blocker->client->ps.saberActionFlags & (1 << SAF_BLOCKING))
+		{
+			return round((double)SaberStances[attackerSaberStyle].BPdrain * (double)octantsWrong * arbitraryModifier);
+		}
+		else
+		{
+			return round((double)SaberStances[attackerSaberStyle].BPdrain * (double)octantsWrong * arbitraryModifier * 2);
+		}
 	}
 }
 
